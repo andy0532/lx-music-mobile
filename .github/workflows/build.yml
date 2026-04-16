@@ -24,7 +24,7 @@ jobs:
           cd app
           keytool -genkey -v -keystore release.keystore -alias release -keyalg RSA -keysize 2048 -validity 10000 -storepass android -keypass android -dname "CN=Car,OU=Car,O=Car,L=Car,ST=Car,C=CN"
           cat > ../keystore.properties << KSEOF
-          storeFile=app/release.keystore
+          storeFile=release.keystore
           storePassword=android
           keyAlias=release
           keyPassword=android
