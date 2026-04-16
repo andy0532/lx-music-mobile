@@ -31,7 +31,9 @@ jobs:
           KSEOF
           cd ..
           ./gradlew assembleRelease
+      - name: List APK files
+        run: find android/app/build/outputs -name "*.apk" || echo "No APK found"
       - uses: actions/upload-artifact@v4
         with:
           name: app-release
-          path: android/app/build/outputs/apk/release/app-release.apk
+          path: android/app/build/outputs/**/*.apk
