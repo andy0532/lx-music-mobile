@@ -36,6 +36,14 @@ const LIST = [
     size: 1.3,
     name: 'setting_basic_font_size_130',
   },
+  {
+    size: 1.4,
+    name: 'setting_basic_font_size_140',
+  },
+  {
+    size: 1.5,
+    name: 'setting_basic_font_size_150',
+  },
 ] as const
 
 type SIZE_TYPE = typeof LIST[number]['size']

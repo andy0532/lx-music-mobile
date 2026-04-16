@@ -3,6 +3,7 @@ import { init as initLog } from '@/utils/log'
 import { bootLog, getBootLog } from '@/utils/bootLog'
 import '@/config/globalData'
 import { getFontSize } from '@/utils/data'
+import { getCarModeScale } from '@/utils/pixelRatio'
 import { exitApp } from './utils/nativeModules/utils'
 import { windowSizeTools } from './utils/windowSizeTools'
 import { listenLaunchEvent } from './navigation/regLaunchedEvent'
@@ -12,7 +13,12 @@ console.log('starting app...')
 listenLaunchEvent()
 
 void Promise.all([getFontSize(), windowSizeTools.init()]).then(async([fontSize]) => {
-  global.lx.fontSize = fontSize
+  // 车机版: 未自定义字体则自适应，已自定义则尊重用户选择
+  if (fontSize === 1) {
+    global.lx.fontSize = getCarModeScale()
+  } else {
+    global.lx.fontSize = fontSize
+  }
   bootLog('Font size setting loaded.')
 
   let isInited = false

@@ -295,8 +295,24 @@ const defaultThemes = [
       'c-badge-tertiary': 'var(c-primary-light-100)',
     },
   },
+  {
+    id: 'glass_cosmos',
+    name: '深空星河',
+    isDark: true,
+    config: {
+      primary: 'rgb(120, 160, 255)',
+      font: 'rgb(230, 235, 255)',
+      'c-app-background': 'rgba(8, 12, 36, 0)',
+      'c-main-background': 'rgba(18, 24, 58, 0.78)',
+      'bg-image': '',
+      'bg-image-position': 'center',
+      'bg-image-size': 'cover',
+      'c-badge-primary': 'rgb(120, 160, 255)',
+      'c-badge-secondary': 'rgb(200, 140, 255)',
+      'c-badge-tertiary': 'rgb(100, 220, 200)',
+    },
+  },
 ]
-
 const themes = defaultThemes.map(({ config: { primary, font, ...extInfo }, ...themeInfo }) => {
   return {
     ...themeInfo,

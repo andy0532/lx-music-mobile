@@ -5,7 +5,7 @@
  * width:375
  * height:667
  */
-import { PixelRatio } from 'react-native'
+import { PixelRatio, Dimensions } from 'react-native'
 import { windowSizeTools } from './windowSizeTools'
 
 // 高保真的宽度和高度
@@ -33,6 +33,18 @@ const scaleW = screenPxW / designWidth
 const scaleH = screenPxH / designHeight
 const scale = Math.min(scaleW, scaleH, 3.1)
 // console.log(scale)
+
+
+/**
+ * 车机版自适应缩放因子
+ * 手机 (~360dp短边): 1.0, 车机7寸 (~560dp): 1.19, 车机10寸 (~800dp): 1.41, 上限1.5
+ */
+export function getCarModeScale(): number {
+  const { width, height } = Dimensions.get('screen')
+  const minDim = Math.min(width, height)
+  const scale = 1.0 + (minDim - 360) / (900 - 360) * 0.5
+  return Math.min(1.5, Math.max(1.0, scale))
+}
 
 /**
  * 设置text
