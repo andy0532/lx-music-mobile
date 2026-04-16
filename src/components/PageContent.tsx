@@ -1,5 +1,5 @@
 // import { useEffect, useState } from 'react'
-import { View , StyleSheet} from 'react-native'
+import { View, StyleSheet } from 'react-native'
 import { useTheme } from '@/store/theme/hook'
 import ImageBackground from '@/components/common/ImageBackground'
 import { useWindowSize } from '@/utils/hooks'
