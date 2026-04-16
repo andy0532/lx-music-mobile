@@ -1,5 +1,5 @@
 // import { useEffect, useState } from 'react'
-import { View } from 'react-native'
+import { View , StyleSheet} from 'react-native'
 import { useTheme } from '@/store/theme/hook'
 import ImageBackground from '@/components/common/ImageBackground'
 import { useWindowSize } from '@/utils/hooks'
@@ -15,6 +15,16 @@ interface Props {
 
 const BLUR_RADIUS = Math.max(scaleSizeAbsHR(18), 10)
 
+// car-mode glow
+const GlowDecorations = () => (
+  <View style={StyleSheet.absoluteFillObject} pointerEvents="none">
+    <View style={{position:'absolute',top:-100,right:-80,width:300,height:300,borderRadius:150,backgroundColor:'rgba(147,51,234,0.12)'}} />
+    <View style={{position:'absolute',bottom:-80,left:-60,width:280,height:280,borderRadius:140,backgroundColor:'rgba(59,130,246,0.12)'}} />
+    <View style={{position:'absolute',top:'40%',left:'20%',width:240,height:240,borderRadius:120,backgroundColor:'rgba(16,185,129,0.08)'}} />
+    <View style={{position:'absolute',top:-200,left:'30%',width:1.5,height:700,backgroundColor:'rgba(139,92,246,0.1)',transform:[{rotate:'45deg'}]}} />
+    <View style={{position:'absolute',top:-200,left:'60%',width:1.5,height:700,backgroundColor:'rgba(59,130,246,0.1)',transform:[{rotate:'45deg'}]}} />
+  </View>
+);
 export default ({ children }: Props) => {
   const theme = useTheme()
   const windowSize = useWindowSize()

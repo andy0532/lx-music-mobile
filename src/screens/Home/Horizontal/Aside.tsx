@@ -1,5 +1,5 @@
 import { memo } from 'react'
-import { ScrollView, TouchableOpacity, View } from 'react-native'
+import { ScrollView, TouchableOpacity, View , Alert} from 'react-native'
 import { useNavActiveId, useStatusbarHeight } from '@/store/common/hook'
 import { useTheme } from '@/store/theme/hook'
 import { Icon } from '@/components/common/Icon'
@@ -10,6 +10,8 @@ import type { InitState } from '@/store/common/state'
 import { exitApp, setNavActiveId } from '@/core/common'
 import { BorderWidths } from '@/theme'
 import { useSettingValue } from '@/store/setting/hook'
+import { useBgPic, setBgPic } from '@/store/common/hook';
+import { selectFile } from '@/utils/fs';
 
 const NAV_WIDTH = 68
 
@@ -102,6 +104,18 @@ const MenuItem = ({ id, icon, onPress }: {
       </TouchableOpacity>
 }
 
+// car-mode wallpaper
+const WallpaperBtn = () => {
+  const bgPic = useBgPic()
+  const handlePress = async () => {
+    try { const r = await selectFile({type:'image/*',allowMultiple:false}); if(r&&r.uri) setBgPic(r.uri) } catch(e) { Alert.alert('提示','选择壁纸失败') }
+  }
+  return (
+    <TouchableOpacity style={{alignItems:'center',padding:10,opacity:0.8}} onPress={handlePress} onLongPress={()=>Alert.alert('清除壁纸','确定?',[{text:'取消',style:'cancel'},{text:'确定',onPress:()=>setBgPic('')}])} activeOpacity={0.7}>
+      <Text style={{color:'#818cf8',fontSize:14}}>壁纸</Text>
+    </TouchableOpacity>
+  )
+};
 export default memo(() => {
   const theme = useTheme()
   // console.log('render drawer nav')
@@ -134,7 +148,8 @@ export default memo(() => {
       <ScrollView style={styles.menus}>
         <View style={styles.list}>
           {NAV_MENUS.map(menu => <MenuItem key={menu.id} id={menu.id} icon={menu.icon} onPress={handlePress} />)}
-        </View>
+                <WallpaperBtn />
+</View>
       </ScrollView>
       {
         showBackBtn ? <MenuItem id="back_home" icon="home" onPress={handlePress} /> : null
