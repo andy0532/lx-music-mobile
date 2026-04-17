@@ -34,6 +34,10 @@ export default {
     state.bgPic = pic
     global.state_event.bgPicUpdated(pic)
   },
+  setCarWallpaper(pic: string | null) {
+    state.carWallpaper = pic
+    global.state_event.carWallpaperUpdated(pic)
+  },
   setSourceNames(names: InitState['sourceNames']) {
     state.sourceNames = names
     global.state_event.sourceNamesUpdated(names)

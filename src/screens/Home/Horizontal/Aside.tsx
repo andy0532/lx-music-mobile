@@ -1,22 +1,21 @@
-import { memo } from 'react'
-import { Alert } from 'react-native'
-import { ScrollView, TouchableOpacity, View, Text } from 'react-native'
-import { useNavActiveId, useStatusbarHeight } from '@/store/common/hook'
+import { memo, useCallback, useRef } from 'react'
+import { ScrollView, TouchableOpacity, View, Alert } from 'react-native'
+import { useNavActiveId, useStatusbarHeight, useCarWallpaper } from '@/store/common/hook'
 import { useTheme } from '@/store/theme/hook'
 import { Icon } from '@/components/common/Icon'
 import { confirmDialog, createStyle, exitApp as backHome } from '@/utils/tools'
 import { NAV_MENUS } from '@/config/constant'
 import type { InitState } from '@/store/common/state'
-import { exitApp, setNavActiveId } from '@/core/common'
+import { exitApp, setNavActiveId, setCarWallpaper } from '@/core/common'
 import { BorderWidths } from '@/theme'
-import { useBgPic } from '@/store/common/hook'
-import { setBgPic } from '@/core/common'
-import { selectFile, privateStorageDirectoryPath, existsFile } from '@/utils/fs'
 import { useSettingValue } from '@/store/setting/hook'
 import { getCarModeScale } from '@/utils/pixelRatio'
+import { selectFile, privateStorageDirectoryPath, unlink } from '@/utils/fs'
 
-const NAV_WIDTH = Math.round(68 * getCarModeScale())
-const ICON_SIZE = Math.round(20 * getCarModeScale())
+const CAR_SCALE = getCarModeScale()
+const NAV_WIDTH = Math.round(68 * CAR_SCALE)
+const ICON_SIZE = Math.round(20 * CAR_SCALE)
+const WALLPAPER_FILE = privateStorageDirectoryPath + '/car_wallpaper.jpg'
 
 const styles = createStyle({
   container: { flexGrow: 0, borderRightWidth: BorderWidths.normal, paddingBottom: 10, width: NAV_WIDTH },
@@ -35,7 +34,7 @@ const Header = () => {
   return (
     <View style={{ paddingTop: statusBarHeight }}>
       <View style={styles.header}>
-        <Icon name="logo" color={theme['c-primary-dark-100-alpha-300']} size={ICON_SIZE} />
+        <Icon name="logo" color={theme['c-primary-dark-100-alpha-300']} size={Math.round(22 * CAR_SCALE)} />
       </View>
     </View>
   )
@@ -51,71 +50,62 @@ const MenuItem = ({ id, icon, onPress }: { id: IdType; icon: string; onPress: (i
     : <TouchableOpacity style={styles.menuItem} onPress={() => { onPress(id) }}><View style={styles.iconContent}><Icon name={icon} size={ICON_SIZE} color={theme['c-font-label']} /></View></TouchableOpacity>
 }
 
-const WALLPAPER_FILE = privateStorageDirectoryPath + '/car_wallpaper.jpg'
-
-const WallpaperBtn = memo(() => {
+const WallpaperBtn = () => {
   const theme = useTheme()
-  const bgPic = useBgPic()
-
-  const handlePress = async () => {
-    try {
-      const result = await selectFile({ extTypes: ['jpg', 'jpeg', 'png', 'webp'], toPath: WALLPAPER_FILE })
-      console.log('[WallpaperBtn] selectFile result:', JSON.stringify(result))
-      if (result) {
-        const localPath = result.data || result.uri || result.path
-        if (localPath) {
-          let fileExists = false
-          try { fileExists = await existsFile(localPath) } catch (_) {}
-          console.log('[WallpaperBtn] localPath:', localPath, 'exists:', fileExists)
-          const uri = localPath.startsWith('/') ? 'file://' + localPath : localPath
-          console.log('[WallpaperBtn] setting bgPic:', uri)
-          setBgPic(uri)
-          return
-        }
-      }
-      try {
-        const r2 = await selectFile({})
-        console.log('[WallpaperBtn] fallback:', JSON.stringify(r2))
-        if (r2) { const u = r2.uri || r2.data || r2.path; if (u) { setBgPic(u); return } }
-      } catch (_) {}
-      Alert.alert('提示', '未能获取壁纸路径')
-    } catch (e) {
-      Alert.alert('提示', '选择壁纸失败: ' + (e instanceof Error ? e.message : String(e)))
-    }
-  }
-
-  const handleLongPress = () => { setBgPic(null) }
-
+  const carWallpaper = useCarWallpaper()
+  const isUnmounted = useRef(false)
+  const handleSelectWallpaper = useCallback(() => {
+    void selectFile({ extTypes: ['jpg', 'jpeg', 'png', 'webp'], toPath: WALLPAPER_FILE }).then((file) => {
+      if (!file || isUnmounted.current) return
+      const uri = file.path.startsWith('file://') ? file.path : 'file://' + file.path
+      setCarWallpaper(uri)
+    }).catch(() => {})
+  }, [])
+  const handleLongPress = useCallback(() => {
+    if (!carWallpaper) return
+    Alert.alert('清除壁纸', '确定要清除当前壁纸吗？', [
+      { text: '取消', style: 'cancel' },
+      { text: '确定', style: 'destructive', onPress: () => { setCarWallpaper(null); void unlink(WALLPAPER_FILE).catch(() => {}) } },
+    ])
+  }, [carWallpaper])
   return (
-    <TouchableOpacity style={styles.menuItem} onPress={handlePress} onLongPress={handleLongPress} activeOpacity={0.5}>
+    <TouchableOpacity style={styles.menuItem} onPress={handleSelectWallpaper} onLongPress={handleLongPress}>
       <View style={styles.iconContent}>
-        <Text style={{ fontSize: Math.round(18 * getCarModeScale()), color: bgPic ? theme['c-primary-font-active'] : theme['c-font-label'] }}>🖼</Text>
+        <Icon name="album" size={ICON_SIZE} color={carWallpaper ? theme['c-primary-font-active'] : theme['c-font-label']} />
       </View>
     </TouchableOpacity>
   )
-})
+}
 
 export default memo(() => {
   const theme = useTheme()
   const showBackBtn = useSettingValue('common.showBackBtn')
   const showExitBtn = useSettingValue('common.showExitBtn')
-
   const handlePress = (id: IdType) => {
     switch (id) {
-      case 'nav_exit': void confirmDialog({ message: global.i18n.t('exit_app_tip'), confirmButtonText: global.i18n.t('list_remove_tip_button') }).then(isExit => { if (!isExit) return; exitApp('Exit Btn') }); return
+      case 'nav_exit':
+        void confirmDialog({ message: global.i18n.t('exit_app_tip'), confirmButtonText: global.i18n.t('list_remove_tip_button') }).then(isExit => { if (!isExit) return; exitApp('Exit Btn') })
+        return
       case 'back_home': backHome(); return
     }
     global.app_event.changeMenuVisible(false)
     setNavActiveId(id)
   }
-
+  const isGlassTheme = theme.id === 'glass_cosmos'
+  const containerStyle = isGlassTheme
+    ? { ...styles.container, borderRightColor: 'rgba(120, 160, 255, 0.12)', backgroundColor: 'transparent' }
+    : { ...styles.container, borderRightColor: theme['c-border-background'] }
   return (
-    <View style={{ ...styles.container, borderRightColor: theme['c-border-background'] }}>
+    <View style={containerStyle}>
       <Header />
-      <ScrollView style={styles.menus}><View style={styles.list}>{NAV_MENUS.map(menu => <MenuItem key={menu.id} id={menu.id} icon={menu.icon} onPress={handlePress} />)}</View></ScrollView>
+      <ScrollView style={styles.menus}>
+        <View style={styles.list}>
+          {NAV_MENUS.map(menu => <MenuItem key={menu.id} id={menu.id} icon={menu.icon} onPress={handlePress} />)}
+        </View>
+      </ScrollView>
+      <WallpaperBtn />
       {showBackBtn ? <MenuItem id="back_home" icon="home" onPress={handlePress} /> : null}
       {showExitBtn ? <MenuItem id="nav_exit" icon="exit2" onPress={handlePress} /> : null}
-      <WallpaperBtn />
     </View>
   )
 })

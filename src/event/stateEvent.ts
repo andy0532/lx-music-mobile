@@ -43,6 +43,9 @@ export class StateEvent extends Event {
   bgPicUpdated(bgPic: string | null) {
     this.emit('bgPicUpdated', bgPic)
   }
+  carWallpaperUpdated(pic: string | null) {
+    this.emit('carWallpaperUpdated', pic)
+  }
 
   playerMusicInfoChanged(musicInfo: PlayerState['musicInfo']) {
     this.emit('playerMusicInfoChanged', musicInfo)

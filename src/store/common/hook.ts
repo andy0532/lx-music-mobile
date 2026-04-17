@@ -109,6 +109,19 @@ export const useBgPic = () => {
   return value
 }
 
+export const useCarWallpaper = () => {
+  const [value, update] = useState(state.carWallpaper)
+
+  useEffect(() => {
+    global.state_event.on('carWallpaperUpdated', update)
+    return () => {
+      global.state_event.off('carWallpaperUpdated', update)
+    }
+  }, [])
+
+  return value
+}
+
 
 export const useSourceNames = () => {
   const [value, update] = useState(state.sourceNames)

@@ -91,7 +91,7 @@ export const buildActiveThemeColors = (theme: LX.Theme): LX.ActiveTheme => {
     'c-button-background-active': theme.config.themeColors['c-primary-light-100-alpha-600'],
     'c-list-header-border-bottom': theme.config.themeColors['c-primary-alpha-900'],
     'c-content-background': ('c-content-background' in theme.config.extInfo) ? theme.config.extInfo['c-content-background'] : theme.config.themeColors['c-primary-light-1000'],
-    'c-border-background': theme.config.themeColors['c-primary-light-100-alpha-700'],
+    'c-border-background': ('c-border-background' in theme.config.extInfo) ? theme.config.extInfo['c-border-background'] as string : theme.config.themeColors['c-primary-light-100-alpha-700'],
     'bg-image': bgImg,
   } as const
 }

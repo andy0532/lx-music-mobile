@@ -2,7 +2,8 @@
 // import commonActions from '@/store/common/action'
 import playerState from '@/store/player/state'
 import { prefetch } from '@/components/common/ImageBackground'
-import { setBgPic } from '@/core/common'
+import { setBgPic, setCarWallpaper } from '@/core/common'
+import { privateStorageDirectoryPath, existsFile, readFile, writeFile, unlink } from '@/utils/fs'
 
 // const handleUpdateSourceNmaes = () => {
 //   const prefix = settingState.setting['common.sourceNameType'] == 'real' ? 'source_' : 'source_alias_'
@@ -67,4 +68,23 @@ export default async(setting: LX.AppSetting) => {
   handlePicUpdate()
   global.state_event.on('playerMusicInfoChanged', handlePicUpdate)
   global.state_event.on('configUpdated', handleConfigUpdate)
+
+  const wallpaperPathFile = privateStorageDirectoryPath + '/car_wallpaper_path.txt'
+  try {
+    if (await existsFile(wallpaperPathFile)) {
+      const savedPath = await readFile(wallpaperPathFile)
+      if (savedPath && await existsFile(savedPath.replace('file://', ''))) {
+        setCarWallpaper(savedPath)
+      }
+    }
+  } catch (e) {}
+
+  const handleCarWallpaperUpdate = (pic) => {
+    if (pic) {
+      void writeFile(wallpaperPathFile, pic)
+    } else {
+      void unlink(wallpaperPathFile).catch(() => {})
+    }
+  }
+  global.state_event.on('carWallpaperUpdated', handleCarWallpaperUpdate)
 }

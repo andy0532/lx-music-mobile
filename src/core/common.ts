@@ -112,3 +112,6 @@ export const requestStoragePermission = async() => {
 export const setBgPic = (pic: string | null) => {
   commonActions.setBgPic(pic)
 }
+export const setCarWallpaper = (pic: string | null) => {
+  commonActions.setCarWallpaper(pic)
+}
