@@ -519,7 +519,7 @@ export const createStyle = <T extends StyleSheet.NamedStyles<T>>(styles: T | Sty
 }
 
 export const isHorizontalMode = (width: number, height: number): boolean => {
-  return true // car-mode
+  return width / height > 1.2
 }
 
 
