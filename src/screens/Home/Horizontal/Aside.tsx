@@ -3,19 +3,20 @@ import { ScrollView, TouchableOpacity, View, Alert } from 'react-native'
 import { useNavActiveId, useStatusbarHeight, useCarWallpaper } from '@/store/common/hook'
 import { useTheme } from '@/store/theme/hook'
 import { Icon } from '@/components/common/Icon'
-import { confirmDialog, createStyle, exitApp as backHome } from '@/utils/tools'
+import { confirmDialog, createStyle, exitApp as backHome, TEMP_FILE_PATH } from '@/utils/tools'
 import { NAV_MENUS } from '@/config/constant'
 import type { InitState } from '@/store/common/state'
 import { exitApp, setNavActiveId, setCarWallpaper } from '@/core/common'
 import { BorderWidths } from '@/theme'
 import { useSettingValue } from '@/store/setting/hook'
 import { getCarModeScale } from '@/utils/pixelRatio'
-import { selectFile, privateStorageDirectoryPath, unlink } from '@/utils/fs'
+import { selectFile, writeFile, unlink, privateStorageDirectoryPath, mkdir } from '@/utils/fs'
 
 const CAR_SCALE = getCarModeScale()
 const NAV_WIDTH = Math.round(68 * CAR_SCALE)
 const ICON_SIZE = Math.round(20 * CAR_SCALE)
 const WALLPAPER_DIR = privateStorageDirectoryPath + '/car_wallpaper'
+const WALLPAPER_FILE = WALLPAPER_DIR + '/wallpaper.jpg'
 
 const styles = createStyle({
   container: { flexGrow: 0, borderRightWidth: BorderWidths.normal, paddingBottom: 10, width: NAV_WIDTH },
@@ -54,20 +55,46 @@ const WallpaperBtn = () => {
   const theme = useTheme()
   const carWallpaper = useCarWallpaper()
   const isUnmounted = useRef(false)
+
   const handleSelectWallpaper = useCallback(() => {
-    void selectFile({ extTypes: ['jpg', 'jpeg', 'png', 'webp'], toPath: WALLPAPER_DIR }).then((file) => {
+    // 使用原项目 ChoosePath 完全相同的 toPath 模式
+    void selectFile({
+      extTypes: ['jpg', 'jpeg', 'png', 'webp'],
+      toPath: TEMP_FILE_PATH,
+    }).then(async (file) => {
       if (!file || isUnmounted.current) return
-      const uri = WALLPAPER_DIR.startsWith('file://') ? WALLPAPER_DIR : 'file://' + WALLPAPER_DIR
-      setCarWallpaper(uri)
+      // toPath模式: file.data 是复制后的本地绝对路径
+      if (file.data && typeof file.data === 'string' && file.data.startsWith('/')) {
+        const uri = 'file://' + file.data
+        setCarWallpaper(uri)
+        return
+      }
+      // 兜底: base64模式，手动保存到本地文件
+      if (file.data && typeof file.data === 'string' && file.data.length > 200) {
+        try {
+          await mkdir(WALLPAPER_DIR)
+          await writeFile(WALLPAPER_FILE, file.data, 'base64')
+          setCarWallpaper('file://' + WALLPAPER_FILE)
+        } catch (e) {
+          console.warn('save wallpaper failed', e)
+        }
+      }
     }).catch(() => {})
   }, [])
+
   const handleLongPress = useCallback(() => {
     if (!carWallpaper) return
     Alert.alert('清除壁纸', '确定要清除当前壁纸吗？', [
       { text: '取消', style: 'cancel' },
-      { text: '确定', style: 'destructive', onPress: () => { setCarWallpaper(null); void unlink(WALLPAPER_DIR).catch(() => {}) } },
+      { text: '确定', style: 'destructive', onPress: () => {
+        setCarWallpaper(null)
+        const filePath = carWallpaper.replace('file://', '')
+        void unlink(filePath).catch(() => {})
+        void unlink(WALLPAPER_FILE).catch(() => {})
+      }},
     ])
   }, [carWallpaper])
+
   return (
     <TouchableOpacity style={styles.menuItem} onPress={handleSelectWallpaper} onLongPress={handleLongPress}>
       <View style={styles.iconContent}>
