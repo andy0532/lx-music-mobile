@@ -62,7 +62,7 @@ export default ({ children }: Props) => {
           {wallpaperUri ? (
             <ImageBackground
               style={{ position: 'absolute', left: 0, top: 0, height: windowSize.height, width: windowSize.width }}
-              source={{ uri: wallpaperUri, headers: defaultHeaders }}
+              source={{ uri: wallpaperUri }}
               resizeMode="cover"
               blurRadius={BLUR_RADIUS}
             >

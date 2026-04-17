@@ -57,7 +57,7 @@ const WallpaperBtn = () => {
   const handleSelectWallpaper = useCallback(() => {
     void selectFile({ extTypes: ['jpg', 'jpeg', 'png', 'webp'], toPath: WALLPAPER_FILE }).then((file) => {
       if (!file || isUnmounted.current) return
-      const uri = file.path.startsWith('file://') ? file.path : 'file://' + file.path
+      const uri = WALLPAPER_FILE.startsWith('file://') ? WALLPAPER_FILE : 'file://' + WALLPAPER_FILE
       setCarWallpaper(uri)
     }).catch(() => {})
   }, [])

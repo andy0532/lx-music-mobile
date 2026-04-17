@@ -17,16 +17,14 @@ import { cheatTip } from '@/utils/tools'
 
 let isFirstPush = true
 const handlePushedHomeScreen = async() => {
-  await cheatTip()
   if (settingState.setting['common.isAgreePact']) {
     if (isFirstPush) {
       isFirstPush = false
-      void checkUpdate()
       void initDeeplink()
     }
   } else {
     if (isFirstPush) isFirstPush = false
-    showPactModal()
+    commonActions.updateSetting({ 'common.isAgreePact': true })
   }
 }
 
