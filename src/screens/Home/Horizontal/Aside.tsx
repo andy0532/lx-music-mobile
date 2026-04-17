@@ -98,7 +98,7 @@ const WallpaperBtn = () => {
   return (
     <TouchableOpacity style={styles.menuItem} onPress={handleSelectWallpaper} onLongPress={handleLongPress}>
       <View style={styles.iconContent}>
-        <Icon name="album" size={ICON_SIZE} color={carWallpaper ? theme['c-primary-font-active'] : theme['c-font-label']} />
+        <Icon name="slider" size={ICON_SIZE} color={carWallpaper ? theme['c-primary-font-active'] : theme['c-font-label']} />
       </View>
     </TouchableOpacity>
   )
@@ -128,6 +128,7 @@ export default memo(() => {
       <ScrollView style={styles.menus}>
         <View style={styles.list}>
           {NAV_MENUS.map(menu => <MenuItem key={menu.id} id={menu.id} icon={menu.icon} onPress={handlePress} />)}
+          <WallpaperBtn />
         </View>
       </ScrollView>
       <WallpaperBtn />
