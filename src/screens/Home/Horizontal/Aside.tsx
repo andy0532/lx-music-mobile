@@ -55,9 +55,9 @@ const WallpaperBtn = () => {
   const carWallpaper = useCarWallpaper()
   const isUnmounted = useRef(false)
   const handleSelectWallpaper = useCallback(() => {
-    void selectFile({ extTypes: ['jpg', 'jpeg', 'png', 'webp'], toPath: WALLPAPER_FILE }).then((file) => {
+    void selectFile({ extTypes: ['jpg', 'jpeg', 'png', 'webp'], toPath: WALLPAPER_DIR }).then((file) => {
       if (!file || isUnmounted.current) return
-      const uri = WALLPAPER_FILE.startsWith('file://') ? WALLPAPER_FILE : 'file://' + WALLPAPER_FILE
+      const uri = WALLPAPER_DIR.startsWith('file://') ? WALLPAPER_DIR : 'file://' + WALLPAPER_DIR
       setCarWallpaper(uri)
     }).catch(() => {})
   }, [])
@@ -65,7 +65,7 @@ const WallpaperBtn = () => {
     if (!carWallpaper) return
     Alert.alert('清除壁纸', '确定要清除当前壁纸吗？', [
       { text: '取消', style: 'cancel' },
-      { text: '确定', style: 'destructive', onPress: () => { setCarWallpaper(null); void unlink(WALLPAPER_FILE).catch(() => {}) } },
+      { text: '确定', style: 'destructive', onPress: () => { setCarWallpaper(null); void unlink(WALLPAPER_DIR).catch(() => {}) } },
     ])
   }, [carWallpaper])
   return (
