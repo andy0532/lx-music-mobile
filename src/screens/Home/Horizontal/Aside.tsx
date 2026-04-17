@@ -131,7 +131,6 @@ export default memo(() => {
           <WallpaperBtn />
         </View>
       </ScrollView>
-      <WallpaperBtn />
       {showBackBtn ? <MenuItem id="back_home" icon="home" onPress={handlePress} /> : null}
       {showExitBtn ? <MenuItem id="nav_exit" icon="exit2" onPress={handlePress} /> : null}
     </View>
