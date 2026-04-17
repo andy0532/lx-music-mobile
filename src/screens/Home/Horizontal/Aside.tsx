@@ -15,7 +15,7 @@ import { selectFile, privateStorageDirectoryPath, unlink } from '@/utils/fs'
 const CAR_SCALE = getCarModeScale()
 const NAV_WIDTH = Math.round(68 * CAR_SCALE)
 const ICON_SIZE = Math.round(20 * CAR_SCALE)
-const WALLPAPER_FILE = privateStorageDirectoryPath + '/car_wallpaper.jpg'
+const WALLPAPER_DIR = privateStorageDirectoryPath + '/car_wallpaper'
 
 const styles = createStyle({
   container: { flexGrow: 0, borderRightWidth: BorderWidths.normal, paddingBottom: 10, width: NAV_WIDTH },
