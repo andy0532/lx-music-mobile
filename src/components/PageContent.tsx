@@ -1,9 +1,7 @@
-// import { useEffect, useState } from 'react'
 import { View, StyleSheet } from 'react-native'
 import { useTheme } from '@/store/theme/hook'
 import ImageBackground from '@/components/common/ImageBackground'
 import { useWindowSize } from '@/utils/hooks'
-import { useMemo } from 'react'
 import { scaleSizeAbsHR } from '@/utils/pixelRatio'
 import { defaultHeaders } from './common/Image'
 import SizeView from './SizeView'
@@ -15,75 +13,60 @@ interface Props {
 
 const BLUR_RADIUS = Math.max(scaleSizeAbsHR(18), 10)
 
-// car-mode glow
+const DeepSpaceBackground = ({ width, height }: { width: number; height: number }) => (
+  <View style={{ position: 'absolute', left: 0, top: 0, width, height }}>
+    <View style={{ flex: 1, backgroundColor: '#060A1E' }} />
+    <View style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '45%', backgroundColor: 'rgba(20, 10, 60, 0.5)' }} />
+    <View style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '35%', backgroundColor: 'rgba(5, 20, 50, 0.4)' }} />
+  </View>
+)
+
 const GlowDecorations = () => (
   <View style={StyleSheet.absoluteFillObject} pointerEvents="none">
-    <View style={{position:'absolute',top:-100,right:-80,width:300,height:300,borderRadius:150,backgroundColor:'rgba(147,51,234,0.12)'}} />
-    <View style={{position:'absolute',bottom:-80,left:-60,width:280,height:280,borderRadius:140,backgroundColor:'rgba(59,130,246,0.12)'}} />
-    <View style={{position:'absolute',top:'40%',left:'20%',width:240,height:240,borderRadius:120,backgroundColor:'rgba(16,185,129,0.08)'}} />
-    <View style={{position:'absolute',top:-200,left:'30%',width:1.5,height:700,backgroundColor:'rgba(139,92,246,0.1)',transform:[{rotate:'45deg'}]}} />
-    <View style={{position:'absolute',top:-200,left:'60%',width:1.5,height:700,backgroundColor:'rgba(59,130,246,0.1)',transform:[{rotate:'45deg'}]}} />
+    <View style={[glowStyles.glow, glowStyles.glowTopLeft]} />
+    <View style={[glowStyles.glow, glowStyles.glowBottomRight]} />
+    <View style={[glowStyles.glow, glowStyles.glowCenter]} />
+    <View style={[glowStyles.glow, glowStyles.glowTopRight]} />
+    <View style={glowStyles.beam} />
+    <View style={glowStyles.beam2} />
   </View>
-);
+)
+
+const glowStyles = StyleSheet.create({
+  glow: { position: 'absolute', borderRadius: 999 },
+  glowTopLeft: { top: -100, left: -80, width: 350, height: 350, backgroundColor: 'rgba(100, 60, 220, 0.25)' },
+  glowBottomRight: { bottom: -80, right: -60, width: 300, height: 300, backgroundColor: 'rgba(0, 180, 200, 0.18)' },
+  glowCenter: { top: '25%', left: '15%', width: 250, height: 250, backgroundColor: 'rgba(140, 100, 240, 0.10)' },
+  glowTopRight: { top: -30, right: '10%', width: 180, height: 180, backgroundColor: 'rgba(180, 100, 160, 0.12)' },
+  beam: { position: 'absolute', top: -50, left: '20%', width: 2, height: '130%', backgroundColor: 'rgba(160, 140, 255, 0.12)', transform: [{ rotate: '45deg' }] },
+  beam2: { position: 'absolute', top: -50, left: '65%', width: 1.5, height: '140%', backgroundColor: 'rgba(80, 200, 240, 0.08)', transform: [{ rotate: '45deg' }] },
+})
+
 export default ({ children }: Props) => {
   const theme = useTheme()
   const windowSize = useWindowSize()
   const pic = useBgPic()
-  // const [wh, setWH] = useState<{ width: number | string, height: number | string }>({ width: '100%', height: Dimensions.get('screen').height })
-
-  // 固定宽高度 防止弹窗键盘时大小改变导致背景被缩放
-  // useEffect(() => {
-  //   const onChange = () => {
-  //     setWH({ width: '100%', height: '100%' })
-  //   }
-
-  //   const changeEvent = Dimensions.addEventListener('change', onChange)
-  //   return () => {
-  //     changeEvent.remove()
-  //   }
-  // }, [])
-  // const handleLayout = (e: LayoutChangeEvent) => {
-  //   // console.log('handleLayout', e.nativeEvent)
-  //   // console.log(Dimensions.get('screen'))
-  //   setWH({ width: e.nativeEvent.layout.width, height: Dimensions.get('screen').height })
-  // }
-  // console.log('render page content')
-
-  const themeComponent = useMemo(() => (
-    <View style={{ flex: 1, overflow: 'hidden' }}>
-      <ImageBackground
-        style={{ position: 'absolute', left: 0, top: 0, height: windowSize.height, width: windowSize.width, backgroundColor: theme['c-content-background'] }}
-        source={theme['bg-image']}
-        resizeMode="cover"
-      >
-      </ImageBackground>
-      <View style={{ flex: 1, flexDirection: 'column', backgroundColor: theme['c-main-background'] }}>
-        {children}
-      </View>
-    </View>
-  ), [children, theme, windowSize.height, windowSize.width])
-  const picComponent = useMemo(() => {
-    return (
-      <View style={{ flex: 1, overflow: 'hidden' }}>
-        <ImageBackground
-          style={{ position: 'absolute', left: 0, top: 0, height: windowSize.height, width: windowSize.width, backgroundColor: theme['c-content-background'] }}
-          source={{ uri: pic!, headers: defaultHeaders }}
-          resizeMode="cover"
-          blurRadius={BLUR_RADIUS}
-        >
-          <View style={{ flex: 1, flexDirection: 'column', backgroundColor: theme['c-content-background'], opacity: 0.76 }}></View>
-        </ImageBackground>
-        <View style={{ flex: 1, flexDirection: 'column' }}>
-          {children}
-        </View>
-      </View>
-    )
-  }, [children, pic, theme, windowSize.height, windowSize.width])
 
   return (
     <>
       <SizeView />
-      {pic ? picComponent : themeComponent}
+      <View style={{ flex: 1, overflow: 'hidden' }}>
+        <DeepSpaceBackground width={windowSize.width} height={windowSize.height} />
+        <GlowDecorations />
+        {pic ? (
+          <ImageBackground
+            style={{ position: 'absolute', left: 0, top: 0, height: windowSize.height, width: windowSize.width }}
+            source={{ uri: pic, headers: defaultHeaders }}
+            resizeMode="cover"
+            blurRadius={BLUR_RADIUS}
+          >
+            <View style={{ flex: 1, backgroundColor: 'rgba(6, 10, 30, 0.45)' }} />
+          </ImageBackground>
+        ) : null}
+        <View style={{ flex: 1, flexDirection: 'column', backgroundColor: 'rgba(12, 18, 48, 0.55)' }}>
+          {children}
+        </View>
+      </View>
     </>
   )
 }
