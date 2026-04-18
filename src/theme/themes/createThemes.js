@@ -278,25 +278,6 @@ const defaultThemes = [
     },
   },
   {
-    id: 'glass_cosmos',
-    name: '深空星河',
-    isDark: true,
-    config: {
-      primary: 'rgb(100, 140, 255)',
-      font: 'rgb(220, 225, 255)',
-      'c-app-background': 'rgba(6, 10, 30, 0)',
-      'c-main-background': 'rgba(10, 14, 40, 0.45)',
-      'c-content-background': 'rgba(14, 18, 48, 0.50)',
-      'c-border-background': 'rgba(120, 160, 255, 0.12)',
-      'bg-image': '',
-      'bg-image-position': 'center',
-      'bg-image-size': 'cover',
-      'c-badge-primary': 'rgb(100, 140, 255)',
-      'c-badge-secondary': 'rgb(180, 100, 255)',
-      'c-badge-tertiary': 'rgb(100, 220, 255)',
-    },
-  },
-  {
     id: 'happy_new_year',
     name: '新年快乐',
     isDark: false,
@@ -314,24 +295,8 @@ const defaultThemes = [
       'c-badge-tertiary': 'var(c-primary-light-100)',
     },
   },
-  {
-    id: 'glass_cosmos',
-    name: '深空星河',
-    isDark: true,
-    config: {
-      primary: 'rgb(120, 160, 255)',
-      font: 'rgb(230, 235, 255)',
-      'c-app-background': 'rgba(8, 12, 36, 0)',
-      'c-main-background': 'rgba(18, 24, 58, 0.78)',
-      'bg-image': '',
-      'bg-image-position': 'center',
-      'bg-image-size': 'cover',
-      'c-badge-primary': 'rgb(120, 160, 255)',
-      'c-badge-secondary': 'rgb(200, 140, 255)',
-      'c-badge-tertiary': 'rgb(100, 220, 200)',
-    },
-  },
 ]
+
 const themes = defaultThemes.map(({ config: { primary, font, ...extInfo }, ...themeInfo }) => {
   return {
     ...themeInfo,
