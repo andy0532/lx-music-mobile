@@ -515,8 +515,12 @@
   "version_title_latest": "🎉 当前版本已是最新 🎊",
   "version_title_new": "🌟 发现新版本 🌟",
   "version_title_unknown": "❓ 获取最新版本信息失败 ❓",
-  "version_title_update": "🚀 软件更新 🚀"
-,
+  "version_title_update": "🚀 软件更新 🚀",
   "setting_basic_font_size_140": "超大",
-  "setting_basic_font_size_150": "极大"
+  "setting_basic_font_size_150": "极大",
+  "theme_glass_amber": "琥珀辉光",
+  "theme_glass_emerald": "翡翠薄雾",
+  "theme_glass_crimson": "绯红帷幕",
+  "theme_glass_violet": "紫罗兰星云",
+  "theme_glass_arctic": "极地霜华"
 }

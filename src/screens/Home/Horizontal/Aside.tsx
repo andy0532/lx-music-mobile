@@ -10,13 +10,12 @@ import { exitApp, setNavActiveId, setCarWallpaper } from '@/core/common'
 import { BorderWidths } from '@/theme'
 import { useSettingValue } from '@/store/setting/hook'
 import { getCarModeScale } from '@/utils/pixelRatio'
-import { selectFile, writeFile, unlink, privateStorageDirectoryPath, mkdir } from '@/utils/fs'
+import { selectFile, moveFile, unlink, privateStorageDirectoryPath, mkdir } from '@/utils/fs'
 
 const CAR_SCALE = getCarModeScale()
 const NAV_WIDTH = Math.round(68 * CAR_SCALE)
 const ICON_SIZE = Math.round(20 * CAR_SCALE)
 const WALLPAPER_DIR = privateStorageDirectoryPath + '/car_wallpaper'
-const WALLPAPER_FILE = WALLPAPER_DIR + '/wallpaper.jpg'
 
 const styles = createStyle({
   container: { flexGrow: 0, borderRightWidth: BorderWidths.normal, paddingBottom: 10, width: NAV_WIDTH },
@@ -57,40 +56,41 @@ const WallpaperBtn = () => {
   const isUnmounted = useRef(false)
 
   const handleSelectWallpaper = useCallback(() => {
-    // 使用原项目 ChoosePath 完全相同的 toPath 模式
     void selectFile({
       extTypes: ['jpg', 'jpeg', 'png', 'webp'],
       toPath: TEMP_FILE_PATH,
     }).then(async (file) => {
       if (!file || isUnmounted.current) return
-      // toPath模式: file.data 是复制后的本地绝对路径
       if (file.data && typeof file.data === 'string' && file.data.startsWith('/')) {
-        const uri = 'file://' + file.data
-        setCarWallpaper(uri)
-        return
-      }
-      // 兜底: base64模式，手动保存到本地文件
-      if (file.data && typeof file.data === 'string' && file.data.length > 200) {
-        try {
-          await mkdir(WALLPAPER_DIR)
-          await writeFile(WALLPAPER_FILE, file.data, 'base64')
-          setCarWallpaper('file://' + WALLPAPER_FILE)
-        } catch (e) {
-          console.warn('save wallpaper failed', e)
+        await mkdir(WALLPAPER_DIR).catch(() => {})
+        for (const old of ['wallpaper.jpg', 'wallpaper.jpeg', 'wallpaper.png', 'wallpaper.webp']) {
+          await unlink(WALLPAPER_DIR + '/' + old).catch(() => {})
         }
+        const ext = file.data.split('.').pop() || 'jpg'
+        const persistPath = WALLPAPER_DIR + '/wallpaper.' + ext
+        try {
+          await moveFile(file.data, persistPath)
+          setCarWallpaper('file://' + persistPath)
+        } catch (e) {
+          console.warn('moveFile failed, using cache path', e)
+          setCarWallpaper('file://' + file.data)
+        }
+        return
       }
     }).catch(() => {})
   }, [])
 
   const handleLongPress = useCallback(() => {
     if (!carWallpaper) return
-    Alert.alert('清除壁纸', '确定要清除当前壁纸吗？', [
-      { text: '取消', style: 'cancel' },
-      { text: '确定', style: 'destructive', onPress: () => {
+    Alert.alert('\u6E05\u9664\u58C1\u7EB8', '\u786E\u5B9A\u8981\u6E05\u9664\u5F53\u524D\u58C1\u7EB8\u5417\uFF1F', [
+      { text: '\u53D6\u6D88', style: 'cancel' },
+      { text: '\u786E\u5B9A', style: 'destructive', onPress: () => {
         setCarWallpaper(null)
         const filePath = carWallpaper.replace('file://', '')
         void unlink(filePath).catch(() => {})
-        void unlink(WALLPAPER_FILE).catch(() => {})
+        for (const ext of ['jpg', 'jpeg', 'png', 'webp']) {
+          void unlink(WALLPAPER_DIR + '/wallpaper.' + ext).catch(() => {})
+        }
       }},
     ])
   }, [carWallpaper])
@@ -118,10 +118,12 @@ export default memo(() => {
     global.app_event.changeMenuVisible(false)
     setNavActiveId(id)
   }
-  const isGlassTheme = theme.id === 'glass_cosmos'
-  const containerStyle = isGlassTheme
-    ? { ...styles.container, borderRightColor: 'rgba(120, 160, 255, 0.12)', backgroundColor: 'transparent' }
-    : { ...styles.container, borderRightColor: theme['c-border-background'] }
+  const isGlassTheme = theme.id.startsWith('glass_')
+  const containerStyle = {
+    ...styles.container,
+    borderRightColor: isGlassTheme ? theme['c-border-background'] : theme['c-border-background'],
+    ...(isGlassTheme ? { backgroundColor: 'transparent' } : {}),
+  }
   return (
     <View style={containerStyle}>
       <Header />

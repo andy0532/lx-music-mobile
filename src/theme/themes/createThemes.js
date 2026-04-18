@@ -1,3 +1,10 @@
+,
+  },
+  },
+  },
+  },
+  },
+  }
 //! 更新默认主题配置后，需要执行 npm run build:theme 重新构建index.json
 
 const fs = require('fs')
@@ -295,18 +302,119 @@ const defaultThemes = [
       'c-badge-tertiary': 'var(c-primary-light-100)',
     },
   },
-]
-
-const themes = defaultThemes.map(({ config: { primary, font, ...extInfo }, ...themeInfo }) => {
-  return {
-    ...themeInfo,
-    isCustom: false,
+  {
+    id: 'glass_cosmos',
+    name: '深空星河',
+    isDark: true,
     config: {
-      themeColors: createThemeColors(primary, font, themeInfo.isDark),
-      extInfo,
+      primary: 'rgb(100, 160, 255)',
+      font: 'rgb(210, 220, 255)',
+      'c-app-background': 'rgba(6, 10, 30, 0)',
+      'c-main-background': 'rgba(10, 16, 40, 0.45)',
+      'c-content-background': 'rgba(14, 20, 50, 0.50)',
+      'c-border-background': 'rgba(100, 160, 255, 0.12)',
+      'bg-image': '',
+      'bg-image-position': 'center',
+      'bg-image-size': 'cover',
+      'c-badge-primary': 'rgb(100, 160, 255)',
+      'c-badge-secondary': 'rgb(150, 100, 255)',
+      'c-badge-tertiary': 'rgb(200, 200, 255)',
     },
-  }
-})
+  },
+  {
+    id: 'glass_amber',
+    name: '琥珀辉光',
+    isDark: true,
+    config: {
+      primary: 'rgb(255, 175, 50)',
+      font: 'rgb(240, 225, 200)',
+      'c-app-background': 'rgba(26, 14, 2, 0)',
+      'c-main-background': 'rgba(40, 25, 8, 0.40)',
+      'c-content-background': 'rgba(50, 32, 10, 0.40)',
+      'c-border-background': 'rgba(255, 175, 50, 0.12)',
+      'bg-image': '',
+      'bg-image-position': 'center',
+      'bg-image-size': 'cover',
+      'c-badge-primary': 'rgb(255, 175, 50)',
+      'c-badge-secondary': 'rgb(255, 120, 50)',
+      'c-badge-tertiary': 'rgb(255, 220, 100)',
+    },
+  },
+  {
+    id: 'glass_emerald',
+    name: '翡翠薄雾',
+    isDark: true,
+    config: {
+      primary: 'rgb(16, 185, 129)',
+      font: 'rgb(200, 240, 220)',
+      'c-app-background': 'rgba(2, 20, 10, 0)',
+      'c-main-background': 'rgba(5, 30, 20, 0.40)',
+      'c-content-background': 'rgba(8, 38, 26, 0.40)',
+      'c-border-background': 'rgba(16, 185, 129, 0.12)',
+      'bg-image': '',
+      'bg-image-position': 'center',
+      'bg-image-size': 'cover',
+      'c-badge-primary': 'rgb(16, 185, 129)',
+      'c-badge-secondary': 'rgb(50, 210, 160)',
+      'c-badge-tertiary': 'rgb(110, 231, 183)',
+    },
+  },
+  {
+    id: 'glass_crimson',
+    name: '绯红帷幕',
+    isDark: true,
+    config: {
+      primary: 'rgb(220, 60, 60)',
+      font: 'rgb(240, 200, 200)',
+      'c-app-background': 'rgba(25, 5, 5, 0)',
+      'c-main-background': 'rgba(35, 10, 10, 0.40)',
+      'c-content-background': 'rgba(45, 14, 14, 0.40)',
+      'c-border-background': 'rgba(220, 60, 60, 0.12)',
+      'bg-image': '',
+      'bg-image-position': 'center',
+      'bg-image-size': 'cover',
+      'c-badge-primary': 'rgb(220, 60, 60)',
+      'c-badge-secondary': 'rgb(255, 120, 80)',
+      'c-badge-tertiary': 'rgb(255, 150, 150)',
+    },
+  },
+  {
+    id: 'glass_violet',
+    name: '紫罗兰星云',
+    isDark: true,
+    config: {
+      primary: 'rgb(160, 90, 255)',
+      font: 'rgb(225, 210, 255)',
+      'c-app-background': 'rgba(15, 5, 25, 0)',
+      'c-main-background': 'rgba(22, 10, 35, 0.40)',
+      'c-content-background': 'rgba(28, 14, 45, 0.40)',
+      'c-border-background': 'rgba(160, 90, 255, 0.12)',
+      'bg-image': '',
+      'bg-image-position': 'center',
+      'bg-image-size': 'cover',
+      'c-badge-primary': 'rgb(160, 90, 255)',
+      'c-badge-secondary': 'rgb(200, 120, 255)',
+      'c-badge-tertiary': 'rgb(120, 180, 255)',
+    },
+  },
+  {
+    id: 'glass_arctic',
+    name: '极地霜华',
+    isDark: true,
+    config: {
+      primary: 'rgb(80, 210, 255)',
+      font: 'rgb(210, 235, 255)',
+      'c-app-background': 'rgba(3, 12, 22, 0)',
+      'c-main-background': 'rgba(5, 18, 30, 0.40)',
+      'c-content-background': 'rgba(8, 22, 38, 0.40)',
+      'c-border-background': 'rgba(80, 210, 255, 0.12)',
+      'bg-image': '',
+      'bg-image-position': 'center',
+      'bg-image-size': 'cover',
+      'c-badge-primary': 'rgb(80, 210, 255)',
+      'c-badge-secondary': 'rgb(140, 230, 255)',
+      'c-badge-tertiary': 'rgb(180, 240, 255)',
+    },
+  },
 
-fs.writeFileSync(path.join(__dirname, 'themes.ts'), `/* eslint-disable */\n//! 此文件由 createThemes.js 生成\n\nexport default ${JSON.stringify(themes, null, 2)} as const`)
-
+]
