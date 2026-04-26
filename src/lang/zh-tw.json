@@ -514,5 +514,11 @@
   "version_title_latest": "🎉 目前版本已是最新 🎊",
   "version_title_new": "🌟 發現新版本 🌟",
   "version_title_unknown": "❓ 獲取最新版本資訊失敗 ❓",
-  "version_title_update": "🚀 軟體更新 🚀"
+  "version_title_update": "🚀 軟體更新 🚀",
+  "theme_glass_cosmos": "深空星河",
+  "theme_glass_amber": "琥珀輝光",
+  "theme_glass_emerald": "翡翠薄霧",
+  "theme_glass_crimson": "緋紅帷幕",
+  "theme_glass_violet": "紫羅蘭星雲",
+  "theme_glass_arctic": "極地霜華"
 }
