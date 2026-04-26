@@ -294,14 +294,7 @@ const defaultThemes = [
       'c-badge-secondary': '#dfbb6b',
       'c-badge-tertiary': 'var(c-primary-light-100)',
     },
-  },,
   },
-  },
-  },
-  },
-  },
-  },
-,
   {
     id: 'glass_cosmos', name: '深空星河', isDark: true,
     config: {
@@ -362,5 +355,18 @@ const defaultThemes = [
       'c-badge-primary': 'rgb(80, 210, 255)', 'c-badge-secondary': 'rgb(140, 230, 255)', 'c-badge-tertiary': 'rgb(180, 240, 255)',
     },
   },
-
 ]
+
+const themes = defaultThemes.map(({ config: { primary, font, ...extInfo }, ...themeInfo }) => {
+  return {
+    ...themeInfo,
+    isCustom: false,
+    config: {
+      themeColors: createThemeColors(primary, font, themeInfo.isDark),
+      extInfo,
+    },
+  }
+})
+
+fs.writeFileSync(path.join(__dirname, 'themes.ts'), `/* eslint-disable */\n//! 此文件由 createThemes.js 生成\n\nexport default ${JSON.stringify(themes, null, 2)} as const`)
+
