@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - master
-      - glass-themes
 
 jobs:
   Android:
@@ -27,7 +26,6 @@ jobs:
           echo "keyAlias=androiddebugkey" >> android/keystore.properties
           echo "keyPassword=android" >> android/keystore.properties
           cd android
-          # skip signing | # skip
           ./gradlew assembleRelease
 
       # Push tag to GitHub if package.json version's tag is not tagged
@@ -47,10 +45,6 @@ jobs:
 
       - name: Generate file MD5
         run: |
-          echo "storeFile=debug.keystore" > android/keystore.properties
-          echo "storePassword=android" >> android/keystore.properties
-          echo "keyAlias=androiddebugkey" >> android/keystore.properties
-          echo "keyPassword=android" >> android/keystore.properties
           cd android/app/build/outputs/apk/release
           md5sum *.apk
 
@@ -74,13 +68,10 @@ jobs:
   #     - name: Build Packages
   #       shell: bash
   #       run: |
-          echo "storeFile=debug.keystore" > android/keystore.properties
-          echo "storePassword=android" >> android/keystore.properties
-          echo "keyAlias=androiddebugkey" >> android/keystore.properties
-          echo "keyPassword=android" >> android/keystore.properties
   #         cd android
-  #         # skip signing | # skip
-  #         ./gradlew assembleRelease
+  #         echo ${{ secrets.KEYSTORE_STORE_FILE_BASE64 }} | base64 --decode > app/${{ secrets.KEYSTORE_STORE_FILE }}
+  #         ./gradlew assembleRelease -PMYAPP_UPLOAD_STORE_FILE='${{ secrets.KEYSTORE_STORE_FILE }}' -PMYAPP_UPLOAD_KEY_ALIAS='${{ secrets.KEYSTORE_KEY_ALIAS }}' -PMYAPP_UPLOAD_STORE_PASSWORD='${{ secrets.KEYSTORE_PASSWORD }}' -PMYAPP_UPLOAD_KEY_PASSWORD='${{ secrets.KEYSTORE_KEY_PASSWORD }}'
+  #         rm -f app/${{ secrets.KEYSTORE_STORE_FILE }}
 
   #     # Push tag to GitHub if package.json version's tag is not tagged
   #     - name: Get package version
@@ -100,10 +91,6 @@ jobs:
   #     - name: Generate file MD5
   #       run: |
   #         echo "current commit sha: ${{ env.COMMIT_SHA }}"
-          echo "storeFile=debug.keystore" > android/keystore.properties
-          echo "storePassword=android" >> android/keystore.properties
-          echo "keyAlias=androiddebugkey" >> android/keystore.properties
-          echo "keyPassword=android" >> android/keystore.properties
   #         cd android/app/build/outputs/apk/release
   #         md5sum *.apk
 
@@ -128,13 +115,10 @@ jobs:
   #     - name: Build Packages
   #       shell: bash
   #       run: |
-          echo "storeFile=debug.keystore" > android/keystore.properties
-          echo "storePassword=android" >> android/keystore.properties
-          echo "keyAlias=androiddebugkey" >> android/keystore.properties
-          echo "keyPassword=android" >> android/keystore.properties
   #         cd android
-  #         # skip signing | # skip
-  #         ./gradlew assembleRelease
+  #         echo ${{ secrets.KEYSTORE_STORE_FILE_BASE64 }} | base64 --decode > app/${{ secrets.KEYSTORE_STORE_FILE }}
+  #         ./gradlew assembleRelease -PMYAPP_UPLOAD_STORE_FILE='${{ secrets.KEYSTORE_STORE_FILE }}' -PMYAPP_UPLOAD_KEY_ALIAS='${{ secrets.KEYSTORE_KEY_ALIAS }}' -PMYAPP_UPLOAD_STORE_PASSWORD='${{ secrets.KEYSTORE_PASSWORD }}' -PMYAPP_UPLOAD_KEY_PASSWORD='${{ secrets.KEYSTORE_KEY_PASSWORD }}'
+  #         rm -f app/${{ secrets.KEYSTORE_STORE_FILE }}
 
   #     # Push tag to GitHub if package.json version's tag is not tagged
   #     - name: Get package version
@@ -154,10 +138,6 @@ jobs:
   #     - name: Generate file MD5
   #       run: |
   #         echo "current commit sha: ${{ env.COMMIT_SHA }}"
-          echo "storeFile=debug.keystore" > android/keystore.properties
-          echo "storePassword=android" >> android/keystore.properties
-          echo "keyAlias=androiddebugkey" >> android/keystore.properties
-          echo "keyPassword=android" >> android/keystore.properties
   #         cd android/app/build/outputs/apk/release
   #         md5sum *.apk
 
