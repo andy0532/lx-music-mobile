@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - master
+      - glass-themes
 
 jobs:
   Android:
