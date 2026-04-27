@@ -4276,15 +4276,15 @@ export default [
       },
       "extInfo": {
         "c-app-background": "rgba(0, 0, 0, 0)",
-        "c-main-background": "rgba(6, 13, 31, 0.20)",
+        "c-main-background": "rgba(6, 13, 31, 0.05)",
         "bg-image": "",
         "bg-image-position": "center",
         "bg-image-size": "cover",
         "c-badge-primary": "rgb(0, 170, 255)",
         "c-badge-secondary": "rgb(64, 196, 255)",
         "c-badge-tertiary": "rgb(128, 213, 255)",
-        "c-content-background": "rgba(10, 20, 45, 0.25)",
-        "c-border-background": "rgba(100, 170, 220, 0.15)"
+        "c-content-background": "rgba(10, 20, 50, 0.10)",
+        "c-border-background": "rgba(80, 160, 220, 0.20)"
       }
     }
   },
@@ -4530,15 +4530,15 @@ export default [
       },
       "extInfo": {
         "c-app-background": "rgba(0, 0, 0, 0)",
-        "c-main-background": "rgba(13, 8, 2, 0.20)",
+        "c-main-background": "rgba(13, 8, 2, 0.05)",
         "bg-image": "",
         "bg-image-position": "center",
         "bg-image-size": "cover",
         "c-badge-primary": "rgb(255, 170, 50)",
         "c-badge-secondary": "rgb(255, 196, 100)",
         "c-badge-tertiary": "rgb(255, 213, 140)",
-        "c-content-background": "rgba(22, 14, 4, 0.25)",
-        "c-border-background": "rgba(200, 160, 100, 0.15)"
+        "c-content-background": "rgba(20, 12, 4, 0.10)",
+        "c-border-background": "rgba(200, 150, 80, 0.20)"
       }
     }
   },
@@ -4784,15 +4784,15 @@ export default [
       },
       "extInfo": {
         "c-app-background": "rgba(0, 0, 0, 0)",
-        "c-main-background": "rgba(2, 13, 8, 0.20)",
+        "c-main-background": "rgba(2, 13, 8, 0.05)",
         "bg-image": "",
         "bg-image-position": "center",
         "bg-image-size": "cover",
         "c-badge-primary": "rgb(0, 212, 170)",
         "c-badge-secondary": "rgb(64, 224, 192)",
         "c-badge-tertiary": "rgb(128, 234, 210)",
-        "c-content-background": "rgba(4, 24, 16, 0.25)",
-        "c-border-background": "rgba(80, 180, 150, 0.15)"
+        "c-content-background": "rgba(4, 24, 16, 0.10)",
+        "c-border-background": "rgba(60, 180, 140, 0.20)"
       }
     }
   },
@@ -5038,15 +5038,15 @@ export default [
       },
       "extInfo": {
         "c-app-background": "rgba(0, 0, 0, 0)",
-        "c-main-background": "rgba(13, 2, 4, 0.20)",
+        "c-main-background": "rgba(13, 2, 4, 0.05)",
         "bg-image": "",
         "bg-image-position": "center",
         "bg-image-size": "cover",
         "c-badge-primary": "rgb(255, 68, 68)",
         "c-badge-secondary": "rgb(255, 120, 120)",
         "c-badge-tertiary": "rgb(255, 160, 160)",
-        "c-content-background": "rgba(28, 4, 8, 0.25)",
-        "c-border-background": "rgba(200, 100, 100, 0.15)"
+        "c-content-background": "rgba(28, 4, 8, 0.10)",
+        "c-border-background": "rgba(200, 80, 80, 0.20)"
       }
     }
   },
@@ -5292,15 +5292,15 @@ export default [
       },
       "extInfo": {
         "c-app-background": "rgba(0, 0, 0, 0)",
-        "c-main-background": "rgba(8, 2, 26, 0.20)",
+        "c-main-background": "rgba(8, 2, 26, 0.05)",
         "bg-image": "",
         "bg-image-position": "center",
         "bg-image-size": "cover",
         "c-badge-primary": "rgb(170, 80, 255)",
         "c-badge-secondary": "rgb(192, 128, 255)",
         "c-badge-tertiary": "rgb(210, 160, 255)",
-        "c-content-background": "rgba(20, 6, 38, 0.25)",
-        "c-border-background": "rgba(160, 120, 200, 0.15)"
+        "c-content-background": "rgba(20, 6, 40, 0.10)",
+        "c-border-background": "rgba(150, 100, 200, 0.20)"
       }
     }
   },
@@ -5546,15 +5546,15 @@ export default [
       },
       "extInfo": {
         "c-app-background": "rgba(0, 0, 0, 0)",
-        "c-main-background": "rgba(2, 13, 18, 0.20)",
+        "c-main-background": "rgba(2, 13, 18, 0.05)",
         "bg-image": "",
         "bg-image-position": "center",
         "bg-image-size": "cover",
         "c-badge-primary": "rgb(0, 230, 210)",
         "c-badge-secondary": "rgb(80, 238, 224)",
         "c-badge-tertiary": "rgb(140, 242, 232)",
-        "c-content-background": "rgba(4, 22, 30, 0.25)",
-        "c-border-background": "rgba(100, 180, 190, 0.15)"
+        "c-content-background": "rgba(4, 22, 32, 0.10)",
+        "c-border-background": "rgba(80, 180, 190, 0.20)"
       }
     }
   }
