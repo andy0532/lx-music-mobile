@@ -53,13 +53,16 @@ export default ({ children }: Props) => {
   const glassOverlay = isGlassTheme ? GLASS_OVERLAYS[theme.id] : null
 
   const themeComponent = useMemo(() => {
+    // Glass themes: stretch gradient PNG to fill screen (no cropping)
+    // Gradients look smooth when stretched, unlike photos
+    const resizeMode = isGlassTheme ? 'stretch' : 'cover'
+
     return (
       <View style={{ flex: 1, overflow: "hidden" }}>
-        {/* Gradient background image */}
         <ImageBackground
           style={{ position: "absolute", left: 0, top: 0, height: windowSize.height, width: windowSize.width, backgroundColor: theme["c-content-background"] }}
           source={theme["bg-image"]}
-          resizeMode="cover"
+          resizeMode={resizeMode}
         />
 
         {/* Self-illuminating ambient glow for glass themes */}
@@ -78,7 +81,7 @@ export default ({ children }: Props) => {
         </View>
       </View>
     )
-  }, [children, theme, windowSize.height, windowSize.width, glassOverlay])
+  }, [children, theme, windowSize.height, windowSize.width, isGlassTheme, glassOverlay])
 
   const picComponent = useMemo(() => {
     return (
