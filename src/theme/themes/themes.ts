@@ -4277,7 +4277,7 @@ export default [
       "extInfo": {
         "c-app-background": "rgba(0, 0, 0, 0)",
         "c-main-background": "rgba(6, 13, 31, 0.05)",
-        "bg-image": "",
+        "bg-image": "glass_cosmos.png",
         "bg-image-position": "center",
         "bg-image-size": "cover",
         "c-badge-primary": "rgb(0, 170, 255)",
@@ -4531,7 +4531,7 @@ export default [
       "extInfo": {
         "c-app-background": "rgba(0, 0, 0, 0)",
         "c-main-background": "rgba(13, 8, 2, 0.05)",
-        "bg-image": "",
+        "bg-image": "glass_amber.png",
         "bg-image-position": "center",
         "bg-image-size": "cover",
         "c-badge-primary": "rgb(255, 170, 50)",
@@ -4785,7 +4785,7 @@ export default [
       "extInfo": {
         "c-app-background": "rgba(0, 0, 0, 0)",
         "c-main-background": "rgba(2, 13, 8, 0.05)",
-        "bg-image": "",
+        "bg-image": "glass_emerald.png",
         "bg-image-position": "center",
         "bg-image-size": "cover",
         "c-badge-primary": "rgb(0, 212, 170)",
@@ -5039,7 +5039,7 @@ export default [
       "extInfo": {
         "c-app-background": "rgba(0, 0, 0, 0)",
         "c-main-background": "rgba(13, 2, 4, 0.05)",
-        "bg-image": "",
+        "bg-image": "glass_crimson.png",
         "bg-image-position": "center",
         "bg-image-size": "cover",
         "c-badge-primary": "rgb(255, 68, 68)",
@@ -5293,7 +5293,7 @@ export default [
       "extInfo": {
         "c-app-background": "rgba(0, 0, 0, 0)",
         "c-main-background": "rgba(8, 2, 26, 0.05)",
-        "bg-image": "",
+        "bg-image": "glass_violet.png",
         "bg-image-position": "center",
         "bg-image-size": "cover",
         "c-badge-primary": "rgb(170, 80, 255)",
@@ -5547,7 +5547,7 @@ export default [
       "extInfo": {
         "c-app-background": "rgba(0, 0, 0, 0)",
         "c-main-background": "rgba(2, 13, 18, 0.05)",
-        "bg-image": "",
+        "bg-image": "glass_arctic.png",
         "bg-image-position": "center",
         "bg-image-size": "cover",
         "c-badge-primary": "rgb(0, 230, 210)",
