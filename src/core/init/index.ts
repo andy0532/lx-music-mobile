@@ -17,16 +17,14 @@ import { cheatTip } from '@/utils/tools'
 
 let isFirstPush = true
 const handlePushedHomeScreen = async() => {
-  await cheatTip()
-  if (settingState.setting['common.isAgreePact']) {
-    if (isFirstPush) {
-      isFirstPush = false
-      void checkUpdate()
-      void initDeeplink()
-    }
-  } else {
-    if (isFirstPush) isFirstPush = false
-    showPactModal()
+  // Skip all startup popups for car mode
+  // await cheatTip()  -- removed: cheat tip popup
+  // PactModal skipped (isAgreePact defaults to true)
+  // Free software Alert skipped (inside PactModal confirm)
+  if (isFirstPush) {
+    isFirstPush = false
+    void checkUpdate()
+    void initDeeplink()
   }
 }
 
