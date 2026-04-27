@@ -8,13 +8,22 @@ import { defaultHeaders } from './common/Image'
 import SizeView from './SizeView'
 import { useBgPic } from '@/store/common/hook'
 
-const GLASS_CONFIGS: Record<string, { bg1: string; bg2: string; glow: string; glow2: string }> = {
-  glass_cosmos: { bg1: '#0a0e27', bg2: '#1a1f4e', glow: 'rgba(79,195,247,0.25)', glow2: 'rgba(79,195,247,0.08)' },
-  glass_amber: { bg1: '#1a0e00', bg2: '#3d2200', glow: 'rgba(255,183,77,0.25)', glow2: 'rgba(255,183,77,0.08)' },
-  glass_emerald: { bg1: '#001a0e', bg2: '#003d22', glow: 'rgba(102,187,106,0.25)', glow2: 'rgba(102,187,106,0.08)' },
-  glass_crimson: { bg1: '#1a0005', bg2: '#4d0015', glow: 'rgba(239,83,80,0.25)', glow2: 'rgba(239,83,80,0.08)' },
-  glass_violet: { bg1: '#0e001a', bg2: '#2a004d', glow: 'rgba(171,71,188,0.25)', glow2: 'rgba(171,71,188,0.08)' },
-  glass_arctic: { bg1: '#001a2e', bg2: '#003d5c', glow: 'rgba(77,208,225,0.25)', glow2: 'rgba(77,208,225,0.08)' },
+interface GlassConfig {
+  bg1: string
+  bg2: string
+  glow: string
+  glow2: string
+  glow3: string
+  border: string
+}
+
+const GLASS_CONFIGS: Record<string, GlassConfig> = {
+  glass_cosmos: { bg1: '#050816', bg2: '#0c1535', glow: 'rgba(0,170,255,0.35)', glow2: 'rgba(0,170,255,0.10)', glow3: 'rgba(0,100,255,0.06)', border: 'rgba(0,170,255,0.18)' },
+  glass_amber: { bg1: '#120a02', bg2: '#2a1600', glow: 'rgba(255,170,50,0.35)', glow2: 'rgba(255,170,50,0.10)', glow3: 'rgba(255,120,0,0.06)', border: 'rgba(255,170,50,0.18)' },
+  glass_emerald: { bg1: '#02100c', bg2: '#042a1c', glow: 'rgba(0,212,170,0.35)', glow2: 'rgba(0,212,170,0.10)', glow3: 'rgba(0,180,140,0.06)', border: 'rgba(0,212,170,0.18)' },
+  glass_crimson: { bg1: '#120204', bg2: '#2a0408', glow: 'rgba(255,68,68,0.35)', glow2: 'rgba(255,68,68,0.10)', glow3: 'rgba(200,40,40,0.06)', border: 'rgba(255,68,68,0.18)' },
+  glass_violet: { bg1: '#0c0214', bg2: '#1e0430', glow: 'rgba(170,80,255,0.35)', glow2: 'rgba(170,80,255,0.10)', glow3: 'rgba(130,50,220,0.06)', border: 'rgba(170,80,255,0.18)' },
+  glass_arctic: { bg1: '#021014', bg2: '#041c24', glow: 'rgba(0,230,210,0.35)', glow2: 'rgba(0,230,210,0.10)', glow3: 'rgba(0,200,180,0.06)', border: 'rgba(0,230,210,0.18)' },
 }
 
 interface Props {
@@ -34,18 +43,20 @@ export default ({ children }: Props) => {
     if (isGlassTheme && glassConfig) {
       return (
         <View style={{ flex: 1, overflow: 'hidden' }}>
-          {/* Gradient background layer 1 - deep base */}
+          {/* Base: deep black */}
           <View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: glassConfig.bg1 }} />
-          {/* Gradient background layer 2 - creates depth */}
-          <View style={{ position: 'absolute', top: '30%', left: 0, right: 0, bottom: 0, backgroundColor: glassConfig.bg2, opacity: 0.6 }} />
-          {/* Main glow - top right */}
-          <View style={{ position: 'absolute', top: -80, right: -80, width: 350, height: 350, borderRadius: 175, backgroundColor: glassConfig.glow }} />
-          {/* Secondary glow - larger, softer */}
-          <View style={{ position: 'absolute', top: -150, right: -150, width: 500, height: 500, borderRadius: 250, backgroundColor: glassConfig.glow2 }} />
-          {/* Diagonal light beam */}
-          <View style={{ position: 'absolute', top: 0, left: '-30%', right: '-30%', bottom: 0, backgroundColor: 'rgba(255,255,255,0.015)', transform: [{ rotate: '-15deg' }] }} />
-          {/* Bottom accent glow */}
-          <View style={{ position: 'absolute', bottom: -60, left: -60, width: 250, height: 250, borderRadius: 125, backgroundColor: glassConfig.glow2 }} />
+          {/* Gradient layer: subtle depth from top */}
+          <View style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '60%', backgroundColor: glassConfig.bg2, opacity: 0.5 }} />
+          {/* Primary glow: top-right large orb */}
+          <View style={{ position: 'absolute', top: -120, right: -100, width: 450, height: 450, borderRadius: 225, backgroundColor: glassConfig.glow }} />
+          {/* Secondary glow: larger ambient light */}
+          <View style={{ position: 'absolute', top: -200, right: -200, width: 650, height: 650, borderRadius: 325, backgroundColor: glassConfig.glow2 }} />
+          {/* Diagonal light streak */}
+          <View style={{ position: 'absolute', top: '-20%', left: '-40%', right: '-40%', bottom: '-20%', backgroundColor: 'rgba(255,255,255,0.012)', transform: [{ rotate: '-20deg' }] }} />
+          {/* Bottom-left glow */}
+          <View style={{ position: 'absolute', bottom: -100, left: -80, width: 380, height: 380, borderRadius: 190, backgroundColor: glassConfig.glow2 }} />
+          {/* Center-bottom subtle glow */}
+          <View style={{ position: 'absolute', bottom: -60, left: '20%', width: 300, height: 300, borderRadius: 150, backgroundColor: glassConfig.glow3 }} />
           {/* Content layer */}
           <View style={{ flex: 1, flexDirection: 'column' }}>
             {children}
