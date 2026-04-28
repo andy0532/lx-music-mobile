@@ -520,5 +520,8 @@
   "theme_glass_emerald": "Emerald Mist",
   "theme_glass_crimson": "Crimson Veil",
   "theme_glass_violet": "Violet Nebula",
-  "theme_glass_arctic": "Arctic Frost"
+  "theme_glass_arctic": "Arctic Frost",
+  "theme_glass_frost": "Frost Crystal",
+  "theme_glass_rose": "Rose Dawn",
+  "theme_glass_spring": "Spring Meadow"
 }

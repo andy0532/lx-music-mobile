@@ -11,28 +11,50 @@ import { createStyle } from '@/utils/tools'
 import { useTheme } from '@/store/theme/hook'
 import { useSettingValue } from '@/store/setting/hook'
 
+interface GlassAccent {
+  bgColor: string
+  accentLine: string
+}
+
+const GLASS_ACCENTS: Record<string, GlassAccent> = {
+  glass_cosmos: { bgColor: 'rgba(10, 25, 55, 0.50)', accentLine: 'rgba(0,140,255,0.4)' },
+  glass_amber: { bgColor: 'rgba(25, 15, 5, 0.50)', accentLine: 'rgba(255,150,30,0.4)' },
+  glass_emerald: { bgColor: 'rgba(5, 25, 16, 0.50)', accentLine: 'rgba(0,190,150,0.4)' },
+  glass_crimson: { bgColor: 'rgba(30, 6, 10, 0.50)', accentLine: 'rgba(255,55,55,0.4)' },
+  glass_violet: { bgColor: 'rgba(18, 6, 35, 0.50)', accentLine: 'rgba(150,65,240,0.4)' },
+  glass_arctic: { bgColor: 'rgba(5, 22, 32, 0.50)', accentLine: 'rgba(0,200,190,0.4)' },
+  glass_frost: { bgColor: 'rgba(255, 255, 255, 0.45)', accentLine: 'rgba(80,140,220,0.5)' },
+  glass_rose: { bgColor: 'rgba(255, 230, 235, 0.45)', accentLine: 'rgba(230,100,130,0.5)' },
+  glass_spring: { bgColor: 'rgba(230, 250, 235, 0.45)', accentLine: 'rgba(80,180,100,0.5)' },
+}
 
 export default memo(({ isHome = false }: { isHome?: boolean }) => {
   // const { onLayout, ...layout } = useLayout()
   const { keyboardShown } = useKeyboard()
   const theme = useTheme()
   const autoHidePlayBar = useSettingValue('common.autoHidePlayBar')
+  const isGlassTheme = theme.id.startsWith('glass_')
+  const glassAccent = isGlassTheme ? GLASS_ACCENTS[theme.id] : null
 
   const playerComponent = useMemo(() => (
-    <View style={{ ...styles.container, backgroundColor: theme['c-content-background'] }}>
+    <View style={{
+      ...styles.container,
+      backgroundColor: isGlassTheme && glassAccent ? glassAccent.bgColor : theme['c-content-background'],
+    }}>
+      {/* Glass theme: top glow line */}
+      {isGlassTheme && glassAccent && (
+        <View style={{ position: 'absolute', top: 0, left: '5%', right: '5%', height: 1, backgroundColor: glassAccent.accentLine }} />
+      )}
       <Pic isHome={isHome} />
       <View style={styles.center}>
         <Title isHome={isHome} />
-        {/* <View style={{ ...styles.row, justifyContent: 'space-between' }}>
-          <PlayTime />
-        </View> */}
         <PlayInfo isHome={isHome} />
       </View>
       <View style={styles.right}>
         <ControlBtn />
       </View>
     </View>
-  ), [theme, isHome])
+  ), [theme, isHome, isGlassTheme, glassAccent])
 
   // console.log('render pb')
 

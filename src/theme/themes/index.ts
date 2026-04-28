@@ -20,6 +20,8 @@ export const BG_IMAGES = {
   'glass_violet.png': require('./images/glass_violet.png') as ImageSourcePropType,
   'glass_arctic.png': require('./images/glass_arctic.png') as ImageSourcePropType,
   'glass_frost.png': require('./images/glass_frost.png') as ImageSourcePropType,
+  'glass_rose.png': require('./images/glass_rose.png') as ImageSourcePropType,
+  'glass_spring.png': require('./images/glass_spring.png') as ImageSourcePropType,
   'glass_cosmos.png': require('./images/glass_cosmos.png') as ImageSourcePropType,
   'glass_amber.png': require('./images/glass_amber.png') as ImageSourcePropType,
   'glass_emerald.png': require('./images/glass_emerald.png') as ImageSourcePropType,
@@ -27,6 +29,8 @@ export const BG_IMAGES = {
   'glass_violet.png': require('./images/glass_violet.png') as ImageSourcePropType,
   'glass_arctic.png': require('./images/glass_arctic.png') as ImageSourcePropType,
   'glass_frost.png': require('./images/glass_frost.png') as ImageSourcePropType,
+  'glass_rose.png': require('./images/glass_rose.png') as ImageSourcePropType,
+  'glass_spring.png': require('./images/glass_spring.png') as ImageSourcePropType,
 } as const
 
 
