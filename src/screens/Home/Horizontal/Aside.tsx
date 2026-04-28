@@ -90,8 +90,8 @@ const MenuItem = ({ id, icon, onPress }: {
   const activeId = useNavActiveId()
   const theme = useTheme()
 
-  // For light glass themes, use c-650 (darker) instead of c-font-label (c-450, too light)
-  const inactiveColor = LIGHT_GLASS_THEMES.has(theme.id) ? theme['c-650'] : theme['c-font-label']
+  // For light glass themes, use c-550 (darker) instead of c-font-label (c-450, too light)
+  const inactiveColor = LIGHT_GLASS_THEMES.has(theme.id) ? theme['c-550'] : theme['c-font-label']
 
   return activeId == id
     ? <View style={styles.menuItem}>

@@ -39,7 +39,14 @@ export default memo(({ isHome = false }: { isHome?: boolean }) => {
   const playerComponent = useMemo(() => (
     <View style={{
       ...styles.container,
-      backgroundColor: isGlassTheme && glassAccent ? glassAccent.bgColor : theme['c-content-background'],
+      ...(isGlassTheme ? {
+        backgroundColor: glassAccent ? glassAccent.bgColor : 'transparent',
+        borderTopLeftRadius: 0,
+        borderTopRightRadius: 0,
+        elevation: 0,
+      } : {
+        backgroundColor: theme['c-content-background'],
+      }),
     }}>
       {/* Glass theme: top glow line */}
       {isGlassTheme && glassAccent && (
