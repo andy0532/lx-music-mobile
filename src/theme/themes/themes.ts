@@ -4276,15 +4276,15 @@ export default [
       },
       "extInfo": {
         "c-app-background": "rgba(0, 0, 0, 0)",
-        "c-main-background": "rgba(15, 30, 65, 0.03)",
+        "c-main-background": "rgba(0, 0, 0, 0.01)",
         "bg-image": "glass_cosmos.png",
         "bg-image-position": "center",
         "bg-image-size": "cover",
         "c-badge-primary": "rgb(0, 170, 255)",
         "c-badge-secondary": "rgb(64, 196, 255)",
         "c-badge-tertiary": "rgb(128, 213, 255)",
-        "c-content-background": "rgba(20, 40, 85, 0.06)",
-        "c-border-background": "rgba(80, 160, 220, 0.45)"
+        "c-content-background": "rgba(0, 0, 0, 0.04)",
+        "c-border-background": "rgba(80, 160, 220, 0.50)"
       }
     }
   },

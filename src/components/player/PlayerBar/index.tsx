@@ -17,15 +17,15 @@ interface GlassAccent {
 }
 
 const GLASS_ACCENTS: Record<string, GlassAccent> = {
-  glass_cosmos: { bgColor: 'rgba(10, 25, 55, 0.35)', accentLine: 'rgba(0,140,255,0.5)' },
-  glass_amber: { bgColor: 'rgba(25, 15, 5, 0.35)', accentLine: 'rgba(255,150,30,0.5)' },
-  glass_emerald: { bgColor: 'rgba(5, 25, 16, 0.35)', accentLine: 'rgba(0,190,150,0.5)' },
-  glass_crimson: { bgColor: 'rgba(30, 6, 10, 0.35)', accentLine: 'rgba(255,55,55,0.5)' },
-  glass_violet: { bgColor: 'rgba(18, 6, 35, 0.35)', accentLine: 'rgba(150,65,240,0.5)' },
-  glass_arctic: { bgColor: 'rgba(5, 22, 32, 0.35)', accentLine: 'rgba(0,200,190,0.5)' },
-  glass_frost: { bgColor: 'rgba(220, 235, 250, 0.30)', accentLine: 'rgba(80,140,220,0.5)' },
-  glass_rose: { bgColor: 'rgba(245, 220, 230, 0.30)', accentLine: 'rgba(220,80,120,0.5)' },
-  glass_spring: { bgColor: 'rgba(220, 245, 228, 0.30)', accentLine: 'rgba(60,170,90,0.5)' },
+  glass_cosmos: { bgColor: 'transparent', accentLine: 'rgba(0,150,255,0.5)' },
+  glass_amber: { bgColor: 'transparent', accentLine: 'rgba(255,150,30,0.5)' },
+  glass_emerald: { bgColor: 'transparent', accentLine: 'rgba(0,190,150,0.5)' },
+  glass_crimson: { bgColor: 'transparent', accentLine: 'rgba(255,55,55,0.5)' },
+  glass_violet: { bgColor: 'transparent', accentLine: 'rgba(150,65,240,0.5)' },
+  glass_arctic: { bgColor: 'transparent', accentLine: 'rgba(0,200,190,0.5)' },
+  glass_frost: { bgColor: 'transparent', accentLine: 'rgba(80,140,220,0.5)' },
+  glass_rose: { bgColor: 'transparent', accentLine: 'rgba(220,80,120,0.5)' },
+  glass_spring: { bgColor: 'transparent', accentLine: 'rgba(60,170,90,0.5)' },
 }
 
 export default memo(({ isHome = false }: { isHome?: boolean }) => {

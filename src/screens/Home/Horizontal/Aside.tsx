@@ -78,6 +78,9 @@ const Header = () => {
 
 type IdType = InitState['navActiveId'] | 'nav_exit' | 'back_home'
 
+// Light glass themes need darker inactive icon color for visibility
+const LIGHT_GLASS_THEMES = new Set(['glass_frost', 'glass_rose', 'glass_spring'])
+
 const MenuItem = ({ id, icon, onPress }: {
   id: IdType
   icon: string
@@ -86,6 +89,9 @@ const MenuItem = ({ id, icon, onPress }: {
   // const t = useI18n()
   const activeId = useNavActiveId()
   const theme = useTheme()
+
+  // For light glass themes, use c-650 (darker) instead of c-font-label (c-450, too light)
+  const inactiveColor = LIGHT_GLASS_THEMES.has(theme.id) ? theme['c-650'] : theme['c-font-label']
 
   return activeId == id
     ? <View style={styles.menuItem}>
@@ -96,7 +102,7 @@ const MenuItem = ({ id, icon, onPress }: {
       </View>
     : <TouchableOpacity style={styles.menuItem} onPress={() => { onPress(id) }}>
         <View style={styles.iconContent}>
-          <Icon name={icon} size={20} color={theme['c-font-label']} />
+          <Icon name={icon} size={20} color={inactiveColor} />
         </View>
         {/* <Text style={styles.text} size={14}>{t(id)}</Text> */}
       </TouchableOpacity>
