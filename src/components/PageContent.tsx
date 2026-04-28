@@ -14,7 +14,7 @@ interface GlassOverlay {
 
 const GLASS_OVERLAYS: Record<string, GlassOverlay> = {
   glass_cosmos: {
-    selfGlow: 'rgba(0,120,255,0.06)',
+    selfGlow: 'rgba(0,100,220,0.08)',
     accentLine: 'rgba(0,150,255,0.5)',
   },
   glass_amber: {
