@@ -37,6 +37,10 @@ const GLASS_OVERLAYS: Record<string, GlassOverlay> = {
     selfGlow: 'rgba(0,150,140,0.03)',
     accentLine: 'rgba(0,200,190,0.4)',
   },
+  glass_frost: {
+    selfGlow: 'rgba(50,120,200,0.04)',
+    accentLine: 'rgba(80,140,220,0.5)',
+  },
 }
 
 interface Props {
