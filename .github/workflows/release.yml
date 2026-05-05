@@ -18,6 +18,7 @@ jobs:
         uses: ./.github/actions/setup
 
       # 在构建前把commit hash写入package.json版本号，APK名自动带hash
+      # 同时更新publish/version.json的version和desc
       - name: Set package version with commit hash
         run: |
           COMMIT_HASH=$(git rev-parse --short HEAD)
@@ -26,6 +27,13 @@ jobs:
           node -e "const fs=require('fs');const p=JSON.parse(fs.readFileSync('package.json'));p.version='${NEW_VERSION}';fs.writeFileSync('package.json',JSON.stringify(p,null,2)+'\n')"
           echo "PACKAGE_VERSION=${NEW_VERSION}" >> $GITHUB_ENV
           echo "Version: ${BASE_VERSION} → ${NEW_VERSION}"
+
+          # 更新publish/version.json - version和desc
+          COMMIT_MSG=$(git log -1 --pretty=%B | head -1)
+          COMMIT_DATE=$(date '+%Y-%m-%d')
+          DESC="毛玻璃主题定制版 ${NEW_VERSION}\n更新日期: ${COMMIT_DATE}\n更新内容: ${COMMIT_MSG}"
+          node -e "const fs=require('fs');const v=JSON.parse(fs.readFileSync('publish/version.json'));v.version='${NEW_VERSION}';v.versionCode=parseInt(v.versionCode||77)+1;v.desc='${DESC}';fs.writeFileSync('publish/version.json',JSON.stringify(v,null,2)+'\n')"
+          echo "publish/version.json updated: version=${NEW_VERSION}"
 
       - name: Build Packages
         env:
