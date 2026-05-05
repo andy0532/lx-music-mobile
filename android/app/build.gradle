@@ -101,7 +101,6 @@ def npmPackageJson = getNpmPackageJson()
 def verCode = npmPackageJson["versionCode"]
 def verName = npmPackageJson["version"]
 def applicationName = npmPackageJson["name"]
-def gitCommitHash = "git rev-parse --short HEAD".execute([], rootProject.projectDir.parentFile).text.trim()
 
 android {
     ndkVersion rootProject.ext.ndkVersion
@@ -176,12 +175,12 @@ android {
             def abi = output.getFilter(OutputFile.ABI)
             if (abi == null) {  // null for the universal-debug, universal-release variants
                 output.outputFileName =
-                        "${applicationName}-v${defaultConfig.versionName}-${gitCommitHash}-universal.apk"
+                        "${applicationName}-v${defaultConfig.versionName}-universal.apk"
             } else {
                 output.versionCodeOverride =
                         defaultConfig.versionCode * 1000 + versionCodes.get(abi)
                 output.outputFileName =
-                        "${applicationName}-v${defaultConfig.versionName}-${gitCommitHash}-${abi}.apk"
+                        "${applicationName}-v${defaultConfig.versionName}-${abi}.apk"
             }
 
         }
