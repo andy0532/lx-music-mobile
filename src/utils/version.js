@@ -13,14 +13,9 @@ const abis = [
 ]
 
 const address = [
-  [`https://raw.githubusercontent.com/${author.name}/${name}/master/publish/version.json`, 'direct'],
-  ['https://registry.npmjs.org/lx-music-mobile-version-info/latest', 'npm'],
-  [`https://cdn.jsdelivr.net/gh/${author.name}/${name}/publish/version.json`, 'direct'],
-  [`https://fastly.jsdelivr.net/gh/${author.name}/${name}/publish/version.json`, 'direct'],
-  [`https://gcore.jsdelivr.net/gh/${author.name}/${name}/publish/version.json`, 'direct'],
-  ['https://registry.npmmirror.com/lx-music-mobile-version-info/latest', 'npm'],
-  ['https://gitee.com/lyswhut/lx-music-mobile-versions/raw/master/version.json', 'direct'],
-  ['http://cdn.stsky.cn/lx-music/mobile/version.json', 'direct'],
+  [`https://raw.githubusercontent.com/andy0532/${name}/glass-themes/publish/version.json`, 'direct'],
+  [`https://cdn.jsdelivr.net/gh/andy0532/${name}@glass-themes/publish/version.json`, 'direct'],
+  [`https://fastly.jsdelivr.net/gh/andy0532/${name}@glass-themes/publish/version.json`, 'direct'],
 ]
 
 
@@ -86,7 +81,22 @@ let apkSavePath
 
 export const downloadNewVersion = async(version, onDownload = noop) => {
   const abi = await getTargetAbi()
-  const url = `https://github.com/${author.name}/${name}/releases/download/v${version}/${name}-v${version}-${abi}.apk`
+  // Try GitHub Release API to get actual APK URL (supports commit hash in filename)
+  let url
+  try {
+    const releaseResp = await fetch(`https://api.github.com/repos/${author.name}/${name}/releases/tags/v${version}`)
+    if (releaseResp.ok) {
+      const releaseData = await releaseResp.json()
+      const asset = releaseData.assets.find(a => a.name.includes(`-${abi}.apk`))
+      if (asset) {
+        url = asset.browser_download_url
+      }
+    }
+  } catch (e) {}
+  // Fallback to direct URL
+  if (!url) {
+    url = `https://github.com/${author.name}/${name}/releases/download/v${version}/${name}-v${version}-${abi}.apk`
+  }
   let savePath = temporaryDirectoryPath + '/lx-music-mobile.apk'
 
   if (downloadJobId) stopDownload(downloadJobId)

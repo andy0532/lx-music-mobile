@@ -20,8 +20,6 @@ export const hideModal = (componentId: string) => {
 }
 
 export const checkUpdate = async() => {
-  // glass-themes: 禁用上游升级提醒
-  return
   versionActions.setVersionInfo({ status: 'checking' })
   let versionInfo: InitState['versionInfo'] = { ...versionState.versionInfo }
   try {
