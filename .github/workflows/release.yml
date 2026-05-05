@@ -29,12 +29,14 @@ jobs:
           echo "BASE_VERSION=${BASE_VERSION}" >> $GITHUB_ENV
           echo "APK Version: ${BASE_VERSION} → ${FULL_VERSION}"
 
-          # 更新publish/version.json - version用基础版本号(不带hash)，desc自动生成
+          # 更新publish/version.json和package.json的versionCode(保持同步)
+          NEW_VC=$(($(node -p "require('./publish/version.json').versionCode||77")+1))
           COMMIT_MSG=$(git log -1 --pretty=%B | head -1)
           COMMIT_DATE=$(date '+%Y-%m-%d')
           DESC="毛玻璃主题定制版 ${FULL_VERSION}\n更新日期: ${COMMIT_DATE}\n更新内容: ${COMMIT_MSG}"
-          node -e "const fs=require('fs');const v=JSON.parse(fs.readFileSync('publish/version.json'));v.version='${BASE_VERSION}';v.versionCode=parseInt(v.versionCode||77)+1;v.desc='${DESC}';fs.writeFileSync('publish/version.json',JSON.stringify(v,null,2)+'\n')"
-          echo "publish/version.json updated: version=${BASE_VERSION} (base), desc with ${FULL_VERSION}"
+          node -e "const fs=require('fs');const v=JSON.parse(fs.readFileSync('publish/version.json'));v.version='${BASE_VERSION}';v.versionCode=${NEW_VC};v.desc='${DESC}';fs.writeFileSync('publish/version.json',JSON.stringify(v,null,2)+'\n')"
+          node -e "const fs=require('fs');const p=JSON.parse(fs.readFileSync('package.json'));p.versionCode=${NEW_VC};fs.writeFileSync('package.json',JSON.stringify(p,null,2)+'\n')"
+          echo "versionCode updated to ${NEW_VC} in both publish/version.json and package.json"
 
       - name: Build Packages
         env:
