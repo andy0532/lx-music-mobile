@@ -81,21 +81,27 @@ let apkSavePath
 
 export const downloadNewVersion = async(version, onDownload = noop) => {
   const abi = await getTargetAbi()
-  // Try GitHub Release API to get actual APK URL (supports commit hash in filename)
   let url
   try {
-    const releaseResp = await fetch(`https://api.github.com/repos/${author.name}/${name}/releases/tags/v${version}`)
+    // Search all releases to find the one matching this version
+    // tag format: v1.8.4-glass-abc1234, version.json version: 1.8.4-glass
+    const releaseResp = await fetch(`https://api.github.com/repos/${author.name}/${name}/releases`)
     if (releaseResp.ok) {
-      const releaseData = await releaseResp.json()
-      const asset = releaseData.assets.find(a => a.name.includes(`-${abi}.apk`))
-      if (asset) {
-        url = asset.browser_download_url
+      const releases = await releaseResp.json()
+      // Find release whose tag starts with v{version}-
+      const prefix = `v${version}-`
+      const release = releases.find(r => r.tag_name === `v${version}` || r.tag_name.startsWith(prefix))
+      if (release) {
+        const asset = release.assets.find(a => a.name.includes(`-${abi}.apk`))
+        if (asset) {
+          url = asset.browser_download_url
+        }
       }
     }
   } catch (e) {}
   // Fallback to direct URL
   if (!url) {
-    url = `https://github.com/${author.name}/${name}/releases/download/v${version}/${name}-v${version}-${abi}.apk`
+    url = `https://github.com/${author.name}/${name}/releases/latest/download/${name}-v${version}-${abi}.apk`
   }
   let savePath = temporaryDirectoryPath + '/lx-music-mobile.apk'
 
