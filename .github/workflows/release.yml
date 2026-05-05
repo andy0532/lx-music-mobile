@@ -17,6 +17,16 @@ jobs:
       - name: Setup Env
         uses: ./.github/actions/setup
 
+      # 在构建前把commit hash写入package.json版本号，APK名自动带hash
+      - name: Set package version with commit hash
+        run: |
+          COMMIT_HASH=$(git rev-parse --short HEAD)
+          BASE_VERSION=$(node -p "require('./package.json').version")
+          NEW_VERSION="${BASE_VERSION}-${COMMIT_HASH}"
+          node -e "const fs=require('fs');const p=JSON.parse(fs.readFileSync('package.json'));p.version='${NEW_VERSION}';fs.writeFileSync('package.json',JSON.stringify(p,null,2)+'\n')"
+          echo "PACKAGE_VERSION=${NEW_VERSION}" >> $GITHUB_ENV
+          echo "Version: ${BASE_VERSION} → ${NEW_VERSION}"
+
       - name: Build Packages
         env:
           DISABLE_SVG: 1
@@ -29,26 +39,7 @@ jobs:
           cd android
           ./gradlew assembleRelease
 
-      - name: Rename APKs with commit hash
-        shell: bash
-        run: |
-          COMMIT_HASH=$(git rev-parse --short HEAD)
-          APK_DIR="android/app/build/outputs/apk/release"
-          for apk in "$APK_DIR"/lx-music-mobile-v*.apk; do
-            BASENAME=$(basename "$apk")
-            NEWNAME=$(echo "$BASENAME" | sed "s/\.apk$/-${COMMIT_HASH}.apk/")
-            mv "$apk" "$APK_DIR/$NEWNAME"
-            echo "Renamed: $BASENAME → $NEWNAME"
-          done
-
       # Push tag to GitHub if package.json version's tag is not tagged
-      - name: Get package version
-        run: |
-          PACKAGE_VERSION=$(node -p "require('./package.json').version")
-          echo "PACKAGE_VERSION=$PACKAGE_VERSION" >> $GITHUB_ENV
-          COMMIT_HASH=$(git rev-parse --short HEAD)
-          echo "COMMIT_HASH=$COMMIT_HASH" >> $GITHUB_ENV
-
       - name: Create git tag
         uses: pkgdeps/git-tag-action@v3
         with:
@@ -66,7 +57,7 @@ jobs:
       - name: Upload Artifact
         uses: ./.github/actions/upload-artifact
         env:
-          PACKAGE_VERSION: ${{ env.PACKAGE_VERSION }}-${{ env.COMMIT_HASH }}
+          PACKAGE_VERSION: ${{ env.PACKAGE_VERSION }}
 
   # Android_SL:
   #   name: Android_SL
@@ -183,14 +174,14 @@ jobs:
           cd artifacts
           md5sum *.apk >> ../publish/changeLog.md
           echo -e '```\n' >> ../publish/changeLog.md
-          echo -e '\n[软件安装包说明](https://lyswhut.github.io/lx-music-doc/download#%E8%BD%AF%E4%BB%B6%E5%AE%89%E8%A3%85%E5%8C%85%E8%AF%B4%E6%98%8E)\n' >> ../publish/changeLog.md
+          echo -e '\n[软件安装包说明](https://lyswhut.github.io/lx-music-doc/desktop#%E8%BD%AF%E4%BB%B6%E5%AE%89%E8%A3%85%E5%8C%85%E8%AF%B4%E6%98%8E)\n' >> ../publish/changeLog.md
 
       - name: Get package version
         run: |
-          PACKAGE_VERSION=$(node -p "require('./package.json').version")
-          echo "PACKAGE_VERSION=$PACKAGE_VERSION" >> $GITHUB_ENV
           COMMIT_HASH=$(git rev-parse --short HEAD)
-          echo "COMMIT_HASH=$COMMIT_HASH" >> $GITHUB_ENV
+          BASE_VERSION=$(node -p "require('./package.json').version")
+          PACKAGE_VERSION="${BASE_VERSION}-${COMMIT_HASH}"
+          echo "PACKAGE_VERSION=$PACKAGE_VERSION" >> $GITHUB_ENV
 
       - name: Release
         uses: softprops/action-gh-release@v2
@@ -200,11 +191,11 @@ jobs:
           draft: false
           tag_name: v${{ env.PACKAGE_VERSION }}
           files: |
-            artifacts/lx-music-mobile-v${{ env.PACKAGE_VERSION }}-${{ env.COMMIT_HASH }}-arm64-v8a.apk
-            artifacts/lx-music-mobile-v${{ env.PACKAGE_VERSION }}-${{ env.COMMIT_HASH }}-armeabi-v7a.apk
-            artifacts/lx-music-mobile-v${{ env.PACKAGE_VERSION }}-${{ env.COMMIT_HASH }}-x86_64.apk
-            artifacts/lx-music-mobile-v${{ env.PACKAGE_VERSION }}-${{ env.COMMIT_HASH }}-x86.apk
-            artifacts/lx-music-mobile-v${{ env.PACKAGE_VERSION }}-${{ env.COMMIT_HASH }}-universal.apk
+            artifacts/lx-music-mobile-v${{ env.PACKAGE_VERSION }}-arm64-v8a.apk
+            artifacts/lx-music-mobile-v${{ env.PACKAGE_VERSION }}-armeabi-v7a.apk
+            artifacts/lx-music-mobile-v${{ env.PACKAGE_VERSION }}-x86_64.apk
+            artifacts/lx-music-mobile-v${{ env.PACKAGE_VERSION }}-x86.apk
+            artifacts/lx-music-mobile-v${{ env.PACKAGE_VERSION }}-universal.apk
 
           # artifacts/lx-music-mobile-v${{ env.PACKAGE_VERSION }}-sl-arm64-v8a.apk
           # artifacts/lx-music-mobile-v${{ env.PACKAGE_VERSION }}-android_5-universal.apk
