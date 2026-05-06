@@ -21,17 +21,24 @@ jobs:
         run: |
           BASE_VERSION=$(node -p "require('./package.json').version")
           COMMIT_HASH=$(git rev-parse --short HEAD)
+          FULL_VERSION="${BASE_VERSION}-${COMMIT_HASH}"
           echo "BASE_VERSION=${BASE_VERSION}" >> $GITHUB_ENV
           echo "COMMIT_HASH=${COMMIT_HASH}" >> $GITHUB_ENV
+          echo "FULL_VERSION=${FULL_VERSION}" >> $GITHUB_ENV
 
           # 更新versionCode (publish/version.json 和 package.json 同步)
           NEW_VC=$(($(node -p "require('./publish/version.json').versionCode||77")+1))
           COMMIT_MSG=$(git log -1 --pretty=%B | head -1)
           COMMIT_DATE=$(date '+%Y-%m-%d')
           DESC="毛玻璃主题定制版 ${BASE_VERSION}\n更新日期: ${COMMIT_DATE}\n更新内容: ${COMMIT_MSG}"
+          # version.json 保持 BASE_VERSION（不带hash），用于APP更新比较
           node -e "const fs=require('fs');const v=JSON.parse(fs.readFileSync('publish/version.json'));v.version='${BASE_VERSION}';v.versionCode=${NEW_VC};v.desc='${DESC}';fs.writeFileSync('publish/version.json',JSON.stringify(v,null,2)+'\n')"
           node -e "const fs=require('fs');const p=JSON.parse(fs.readFileSync('package.json'));p.versionCode=${NEW_VC};fs.writeFileSync('package.json',JSON.stringify(p,null,2)+'\n')"
           echo "versionCode updated to ${NEW_VC}"
+
+          # 将 commit hash 写入 package.json version，使 Gradle 构建的 APK 文件名和 versionName 都带 hash
+          node -e "const fs=require('fs');const p=JSON.parse(fs.readFileSync('package.json'));p.version='${FULL_VERSION}';fs.writeFileSync('package.json',JSON.stringify(p,null,2)+'\n')"
+          echo "package.json version set to ${FULL_VERSION}"
 
       - name: Build Packages
         env:
@@ -50,7 +57,7 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           github_repo: ${{ github.repository }}
-          version: ${{ env.BASE_VERSION }}-${{ env.COMMIT_HASH }}
+          version: ${{ env.FULL_VERSION }}
           git_commit_sha: ${{ github.sha }}
           git_tag_prefix: "v"
 
@@ -62,7 +69,7 @@ jobs:
       - name: Upload Artifact
         uses: ./.github/actions/upload-artifact
         env:
-          PACKAGE_VERSION: ${{ env.BASE_VERSION }}
+          PACKAGE_VERSION: ${{ env.FULL_VERSION }}
 
   Release:
     name: Release
@@ -78,19 +85,6 @@ jobs:
           path: ./artifacts
           merge-multiple: true
 
-      - name: Rename APKs with commit hash
-        shell: bash
-        run: |
-          BASE_VERSION=$(node -p "require('./package.json').version")
-          COMMIT_HASH=$(git rev-parse --short HEAD)
-          cd artifacts
-          for apk in lx-music-mobile-v${BASE_VERSION}-*.apk; do
-            # e.g. lx-music-mobile-v1.8.4-glass-arm64-v8a.apk → lx-music-mobile-v1.8.4-glass-c1a50f6-arm64-v8a.apk
-            NEWNAME=$(echo "$apk" | sed "s/-v${BASE_VERSION}-/-v${BASE_VERSION}-${COMMIT_HASH}-/")
-            mv "$apk" "$NEWNAME"
-            echo "Renamed: $apk → $NEWNAME"
-          done
-
       - name: Generate file MD5
         run: |
           echo -e '\n### File MD5\n```' >> ./publish/changeLog.md
@@ -101,6 +95,7 @@ jobs:
 
       - name: Get package version
         run: |
+          # 读取 package.json 中的 BASE_VERSION（源码仓库中不带hash）
           BASE_VERSION=$(node -p "require('./package.json').version")
           COMMIT_HASH=$(git rev-parse --short HEAD)
           echo "PACKAGE_VERSION=${BASE_VERSION}-${COMMIT_HASH}" >> $GITHUB_ENV

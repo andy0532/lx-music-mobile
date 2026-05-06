@@ -47,7 +47,7 @@ export const checkUpdate = async() => {
   } else {
     versionInfo.status = 'idle'
     versionInfo.isUnknown = false
-    if (compareVer(versionInfo.version, versionInfo.newVersion.version) != -1) {
+    if (compareVer(versionInfo.version.replace(/-[0-9a-f]{7,8}$/, ''), versionInfo.newVersion.version.replace(/-[0-9a-f]{7,8}$/, '')) != -1) {
       versionInfo.isLatest = true
     }
   }
