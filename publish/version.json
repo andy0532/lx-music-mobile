@@ -1,6 +1,6 @@
 {
-  "version": "1.8.4-glass-34dfd63",
-  "desc": "毛玻璃主题定制版 1.8.4-glass\n更新日期: 2026-05-06\n更新内容: trigger build [ci force]",
+  "version": "1.8.4-glass-ee979d0",
+  "desc": "毛玻璃主题定制版 1.8.4-glass\n更新日期: 2026-05-06\n更新内容: fix: 修复更新检查和下载功能",
   "history": [
     {
       "version": "1.8.3",
@@ -287,5 +287,5 @@
       "desc": "lx-music移动端v0.1.1版本发布 🎊 🎉"
     }
   ],
-  "versionCode": 78
+  "versionCode": 79
 }
