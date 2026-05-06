@@ -6,6 +6,9 @@ on:
       - master
       - glass-themes
 
+permissions:
+  contents: write
+
 jobs:
   Android:
     name: Android
@@ -31,8 +34,8 @@ jobs:
           COMMIT_MSG=$(git log -1 --pretty=%B | head -1)
           COMMIT_DATE=$(date '+%Y-%m-%d')
           DESC="毛玻璃主题定制版 ${BASE_VERSION}\n更新日期: ${COMMIT_DATE}\n更新内容: ${COMMIT_MSG}"
-          # version.json 保持 BASE_VERSION（不带hash），用于APP更新比较
-          node -e "const fs=require('fs');const v=JSON.parse(fs.readFileSync('publish/version.json'));v.version='${BASE_VERSION}';v.versionCode=${NEW_VC};v.desc='${DESC}';fs.writeFileSync('publish/version.json',JSON.stringify(v,null,2)+'\n')"
+          # version.json 也使用 FULL_VERSION（带hash），APP显示最新版本时会展示完整版本号
+          node -e "const fs=require('fs');const v=JSON.parse(fs.readFileSync('publish/version.json'));v.version='${FULL_VERSION}';v.versionCode=${NEW_VC};v.desc='${DESC}';fs.writeFileSync('publish/version.json',JSON.stringify(v,null,2)+'\n')"
           node -e "const fs=require('fs');const p=JSON.parse(fs.readFileSync('package.json'));p.versionCode=${NEW_VC};fs.writeFileSync('package.json',JSON.stringify(p,null,2)+'\n')"
           echo "versionCode updated to ${NEW_VC}"
 
@@ -70,6 +73,14 @@ jobs:
         uses: ./.github/actions/upload-artifact
         env:
           PACKAGE_VERSION: ${{ env.FULL_VERSION }}
+
+      - name: Push version.json to repo
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add publish/version.json
+          git diff --cached --quiet || git commit -m "chore: update version.json [skip ci]"
+          git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }} HEAD:glass-themes
 
   Release:
     name: Release
