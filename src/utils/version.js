@@ -88,9 +88,12 @@ export const downloadNewVersion = async(version, onDownload = noop) => {
     const releaseResp = await fetch(`https://api.github.com/repos/${author.name}/${name}/releases`)
     if (releaseResp.ok) {
       const releases = await releaseResp.json()
-      // Find release whose tag starts with v{version}-
+      // Find release whose tag starts with v{version}-, prefer the latest (most recent)
       const prefix = `v${version}-`
-      const release = releases.find(r => r.tag_name === `v${version}` || r.tag_name.startsWith(prefix))
+      const matching = releases.filter(r => r.tag_name === `v${version}` || r.tag_name.startsWith(prefix))
+      // Sort by published_at descending to get the latest release first
+      matching.sort((a, b) => new Date(b.published_at) - new Date(a.published_at))
+      const release = matching[0]
       if (release) {
         const asset = release.assets.find(a => a.name.includes(`-${abi}.apk`))
         if (asset) {
