@@ -6,6 +6,7 @@ import { getIgnoreVersion, getIgnoreVersionFailTipTime, saveIgnoreVersion, saveI
 import { showVersionModal } from '@/navigation'
 import { Navigation } from 'react-native-navigation'
 import { toast } from '@/utils/tools'
+import { versionCode as currentVersionCode } from '../../package.json'
 
 export const showModal = () => {
   if (versionState.showModal) return
@@ -22,8 +23,10 @@ export const hideModal = (componentId: string) => {
 export const checkUpdate = async() => {
   versionActions.setVersionInfo({ status: 'checking' })
   let versionInfo: InitState['versionInfo'] = { ...versionState.versionInfo }
+  let remoteVersionCode = 0
   try {
-    const { version, desc, history } = await getVersionInfo()
+    const { version, desc, history, versionCode } = await getVersionInfo()
+    remoteVersionCode = versionCode ?? 0
     versionInfo.newVersion = {
       version,
       desc,
@@ -36,18 +39,18 @@ export const checkUpdate = async() => {
       history: [],
     }
   }
-  // const versionInfo = {
-  //   version: '1.9.0',
-  //   desc: '- 更新xxx\n- 修复xxx123的萨达修复xxx123的萨达修复xxx123的萨达修复xxx123的萨达修复xxx123的萨达',
-  //   history: [{ version: '1.8.0', desc: '- 更新xxx22\n- 修复xxx22' }, { version: '1.7.0', desc: '- 更新xxx22\n- 修复xxx22' }],
-  // }
   if (versionInfo.newVersion.version == '0.0.0') {
     versionInfo.isUnknown = true
     versionInfo.status = 'error'
   } else {
     versionInfo.status = 'idle'
     versionInfo.isUnknown = false
-    if (compareVer(versionInfo.version.replace(/-[0-9a-f]{7,8}$/, ''), versionInfo.newVersion.version.replace(/-[0-9a-f]{7,8}$/, '')) != -1) {
+    // Compare base version (strip commit hash) and versionCode
+    const currentBase = versionInfo.version.replace(/-[0-9a-f]{7,8}$/, '')
+    const remoteBase = versionInfo.newVersion.version.replace(/-[0-9a-f]{7,8}$/, '')
+    const verCompare = compareVer(currentBase, remoteBase)
+    // Has update if: remote base version is newer, OR same base version but higher versionCode
+    if (verCompare != -1 && remoteVersionCode <= currentVersionCode) {
       versionInfo.isLatest = true
     }
   }
