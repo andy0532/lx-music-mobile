@@ -81,10 +81,12 @@ jobs:
       - name: Rename APKs with commit hash
         shell: bash
         run: |
+          BASE_VERSION=$(node -p "require('./package.json').version")
           COMMIT_HASH=$(git rev-parse --short HEAD)
           cd artifacts
-          for apk in lx-music-mobile-v*.apk; do
-            NEWNAME=$(echo "$apk" | sed "s/\.apk$/-${COMMIT_HASH}.apk/")
+          for apk in lx-music-mobile-v${BASE_VERSION}-*.apk; do
+            # e.g. lx-music-mobile-v1.8.4-glass-arm64-v8a.apk → lx-music-mobile-v1.8.4-glass-c1a50f6-arm64-v8a.apk
+            NEWNAME=$(echo "$apk" | sed "s/-v${BASE_VERSION}-/-v${BASE_VERSION}-${COMMIT_HASH}-/")
             mv "$apk" "$NEWNAME"
             echo "Renamed: $apk → $NEWNAME"
           done
