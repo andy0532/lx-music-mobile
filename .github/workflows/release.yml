@@ -23,7 +23,6 @@ jobs:
           COMMIT_HASH=$(git rev-parse --short HEAD)
           echo "BASE_VERSION=${BASE_VERSION}" >> $GITHUB_ENV
           echo "COMMIT_HASH=${COMMIT_HASH}" >> $GITHUB_ENV
-          echo "PACKAGE_VERSION=${BASE_VERSION}" >> $GITHUB_ENV
 
           # 更新versionCode (publish/version.json 和 package.json 同步)
           NEW_VC=$(($(node -p "require('./publish/version.json').versionCode||77")+1))
@@ -46,24 +45,12 @@ jobs:
           cd android
           ./gradlew assembleRelease
 
-      - name: Rename APKs with commit hash
-        shell: bash
-        run: |
-          APK_DIR="android/app/build/outputs/apk/release"
-          for apk in "$APK_DIR"/lx-music-mobile-v*.apk; do
-            BASENAME=$(basename "$apk")
-            # lx-music-mobile-v1.8.4-glass-arm64-v8a.apk → lx-music-mobile-v1.8.4-glass-abc1234-arm64-v8a.apk
-            NEWNAME=$(echo "$BASENAME" | sed "s/\.apk$/-${{ env.COMMIT_HASH }}.apk/")
-            cp "$apk" "$APK_DIR/$NEWNAME"
-            echo "Created: $NEWNAME"
-          done
-
       - name: Create git tag
         uses: pkgdeps/git-tag-action@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           github_repo: ${{ github.repository }}
-          version: ${{ env.PACKAGE_VERSION }}
+          version: ${{ env.BASE_VERSION }}
           git_commit_sha: ${{ github.sha }}
           git_tag_prefix: "v"
 
@@ -75,7 +62,7 @@ jobs:
       - name: Upload Artifact
         uses: ./.github/actions/upload-artifact
         env:
-          PACKAGE_VERSION: ${{ env.PACKAGE_VERSION }}-${{ env.COMMIT_HASH }}
+          PACKAGE_VERSION: ${{ env.BASE_VERSION }}
 
   Release:
     name: Release
@@ -90,6 +77,17 @@ jobs:
         with:
           path: ./artifacts
           merge-multiple: true
+
+      - name: Rename APKs with commit hash
+        shell: bash
+        run: |
+          COMMIT_HASH=$(git rev-parse --short HEAD)
+          cd artifacts
+          for apk in lx-music-mobile-v*.apk; do
+            NEWNAME=$(echo "$apk" | sed "s/\.apk$/-${COMMIT_HASH}.apk/")
+            mv "$apk" "$NEWNAME"
+            echo "Renamed: $apk → $NEWNAME"
+          done
 
       - name: Generate file MD5
         run: |
