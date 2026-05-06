@@ -17,26 +17,22 @@ jobs:
       - name: Setup Env
         uses: ./.github/actions/setup
 
-      # 在构建前把commit hash写入package.json版本号，APK名自动带hash
-      # 同时更新publish/version.json（不含hash，用于APP更新比较）
-      - name: Set package version with commit hash
+      - name: Set version info
         run: |
-          COMMIT_HASH=$(git rev-parse --short HEAD)
           BASE_VERSION=$(node -p "require('./package.json').version")
-          FULL_VERSION="${BASE_VERSION}-${COMMIT_HASH}"
-          node -e "const fs=require('fs');const p=JSON.parse(fs.readFileSync('package.json'));p.version='${FULL_VERSION}';fs.writeFileSync('package.json',JSON.stringify(p,null,2)+'\n')"
-          echo "PACKAGE_VERSION=${FULL_VERSION}" >> $GITHUB_ENV
+          COMMIT_HASH=$(git rev-parse --short HEAD)
           echo "BASE_VERSION=${BASE_VERSION}" >> $GITHUB_ENV
-          echo "APK Version: ${BASE_VERSION} → ${FULL_VERSION}"
+          echo "COMMIT_HASH=${COMMIT_HASH}" >> $GITHUB_ENV
+          echo "PACKAGE_VERSION=${BASE_VERSION}" >> $GITHUB_ENV
 
-          # 更新publish/version.json和package.json的versionCode(保持同步)
+          # 更新versionCode (publish/version.json 和 package.json 同步)
           NEW_VC=$(($(node -p "require('./publish/version.json').versionCode||77")+1))
           COMMIT_MSG=$(git log -1 --pretty=%B | head -1)
           COMMIT_DATE=$(date '+%Y-%m-%d')
-          DESC="毛玻璃主题定制版 ${FULL_VERSION}\n更新日期: ${COMMIT_DATE}\n更新内容: ${COMMIT_MSG}"
+          DESC="毛玻璃主题定制版 ${BASE_VERSION}\n更新日期: ${COMMIT_DATE}\n更新内容: ${COMMIT_MSG}"
           node -e "const fs=require('fs');const v=JSON.parse(fs.readFileSync('publish/version.json'));v.version='${BASE_VERSION}';v.versionCode=${NEW_VC};v.desc='${DESC}';fs.writeFileSync('publish/version.json',JSON.stringify(v,null,2)+'\n')"
           node -e "const fs=require('fs');const p=JSON.parse(fs.readFileSync('package.json'));p.versionCode=${NEW_VC};fs.writeFileSync('package.json',JSON.stringify(p,null,2)+'\n')"
-          echo "versionCode updated to ${NEW_VC} in both publish/version.json and package.json"
+          echo "versionCode updated to ${NEW_VC}"
 
       - name: Build Packages
         env:
@@ -50,7 +46,18 @@ jobs:
           cd android
           ./gradlew assembleRelease
 
-      # Push tag to GitHub if package.json version's tag is not tagged
+      - name: Rename APKs with commit hash
+        shell: bash
+        run: |
+          APK_DIR="android/app/build/outputs/apk/release"
+          for apk in "$APK_DIR"/lx-music-mobile-v*.apk; do
+            BASENAME=$(basename "$apk")
+            # lx-music-mobile-v1.8.4-glass-arm64-v8a.apk → lx-music-mobile-v1.8.4-glass-abc1234-arm64-v8a.apk
+            NEWNAME=$(echo "$BASENAME" | sed "s/\.apk$/-${{ env.COMMIT_HASH }}.apk/")
+            cp "$apk" "$APK_DIR/$NEWNAME"
+            echo "Created: $NEWNAME"
+          done
+
       - name: Create git tag
         uses: pkgdeps/git-tag-action@v3
         with:
@@ -68,106 +75,11 @@ jobs:
       - name: Upload Artifact
         uses: ./.github/actions/upload-artifact
         env:
-          PACKAGE_VERSION: ${{ env.PACKAGE_VERSION }}
-
-  # Android_SL:
-  #   name: Android_SL
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Check out git repository
-  #       uses: actions/checkout@v4
-  #       with:
-  #         ref: statusbar_lyric
-
-  #     - name: Setup Env
-  #       uses: ./.github/actions/setup
-
-  #     - name: Build Packages
-  #       shell: bash
-  #       run: |
-  #         cd android
-  #         echo ${{ secrets.KEYSTORE_STORE_FILE_BASE64 }} | base64 --decode > app/${{ secrets.KEYSTORE_STORE_FILE }}
-  #         ./gradlew assembleRelease -PMYAPP_UPLOAD_STORE_FILE='${{ secrets.KEYSTORE_STORE_FILE }}' -PMYAPP_UPLOAD_KEY_ALIAS='${{ secrets.KEYSTORE_KEY_ALIAS }}' -PMYAPP_UPLOAD_STORE_PASSWORD='${{ secrets.KEYSTORE_PASSWORD }}' -PMYAPP_UPLOAD_KEY_PASSWORD='${{ secrets.KEYSTORE_KEY_PASSWORD }}'
-  #         rm -f app/${{ secrets.KEYSTORE_STORE_FILE }}
-
-  #     # Push tag to GitHub if package.json version's tag is not tagged
-  #     - name: Get package version
-  #       run: |
-  #         node -p -e '`PACKAGE_VERSION=${require("./package.json").version}`' >> $GITHUB_ENV
-  #         echo "COMMIT_SHA=$(git show -s --format=%H)" >> $GITHUB_ENV
-
-  #     - name: Create git tag
-  #       uses: pkgdeps/git-tag-action@v3
-  #       with:
-  #         github_token: ${{ secrets.GITHUB_TOKEN }}
-  #         github_repo: ${{ github.repository }}
-  #         version: ${{ env.PACKAGE_VERSION }}
-  #         git_commit_sha: ${{ env.COMMIT_SHA }}
-  #         git_tag_prefix: "v"
-
-  #     - name: Generate file MD5
-  #       run: |
-  #         echo "current commit sha: ${{ env.COMMIT_SHA }}"
-  #         cd android/app/build/outputs/apk/release
-  #         md5sum *.apk
-
-  #     - name: Upload Artifact
-  #       uses: ./.github/actions/upload-artifact
-  #       env:
-  #         PACKAGE_TYPE: 'Android_SL'
-  #         PACKAGE_VERSION: ${{ env.PACKAGE_VERSION }}
-
-  # Android_5:
-  #   name: Android_5
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Check out git repository
-  #       uses: actions/checkout@v4
-  #       with:
-  #         ref: android_5
-
-  #     - name: Setup Env
-  #       uses: ./.github/actions/setup
-
-  #     - name: Build Packages
-  #       shell: bash
-  #       run: |
-  #         cd android
-  #         echo ${{ secrets.KEYSTORE_STORE_FILE_BASE64 }} | base64 --decode > app/${{ secrets.KEYSTORE_STORE_FILE }}
-  #         ./gradlew assembleRelease -PMYAPP_UPLOAD_STORE_FILE='${{ secrets.KEYSTORE_STORE_FILE }}' -PMYAPP_UPLOAD_KEY_ALIAS='${{ secrets.KEYSTORE_KEY_ALIAS }}' -PMYAPP_UPLOAD_STORE_PASSWORD='${{ secrets.KEYSTORE_PASSWORD }}' -PMYAPP_UPLOAD_KEY_PASSWORD='${{ secrets.KEYSTORE_KEY_PASSWORD }}'
-  #         rm -f app/${{ secrets.KEYSTORE_STORE_FILE }}
-
-  #     # Push tag to GitHub if package.json version's tag is not tagged
-  #     - name: Get package version
-  #       run: |
-  #         node -p -e '`PACKAGE_VERSION=${require("./package.json").version}`' >> $GITHUB_ENV
-  #         echo "COMMIT_SHA=$(git show -s --format=%H)" >> $GITHUB_ENV
-
-  #     - name: Create git tag
-  #       uses: pkgdeps/git-tag-action@v3
-  #       with:
-  #         github_token: ${{ secrets.GITHUB_TOKEN }}
-  #         github_repo: ${{ github.repository }}
-  #         version: ${{ env.PACKAGE_VERSION }}
-  #         git_commit_sha: ${{ env.COMMIT_SHA }}
-  #         git_tag_prefix: "v"
-
-  #     - name: Generate file MD5
-  #       run: |
-  #         echo "current commit sha: ${{ env.COMMIT_SHA }}"
-  #         cd android/app/build/outputs/apk/release
-  #         md5sum *.apk
-
-  #     - name: Upload Artifact
-  #       uses: ./.github/actions/upload-artifact
-  #       env:
-  #         PACKAGE_TYPE: 'Android_5'
-  #         PACKAGE_VERSION: ${{ env.PACKAGE_VERSION }}
+          PACKAGE_VERSION: ${{ env.PACKAGE_VERSION }}-${{ env.COMMIT_HASH }}
 
   Release:
     name: Release
     runs-on: ubuntu-latest
-    # needs: [Android, Android_SL]
     needs: [Android]
     steps:
       - name: Check out git repository
@@ -189,10 +101,9 @@ jobs:
 
       - name: Get package version
         run: |
-          COMMIT_HASH=$(git rev-parse --short HEAD)
           BASE_VERSION=$(node -p "require('./package.json').version")
-          PACKAGE_VERSION="${BASE_VERSION}-${COMMIT_HASH}"
-          echo "PACKAGE_VERSION=$PACKAGE_VERSION" >> $GITHUB_ENV
+          COMMIT_HASH=$(git rev-parse --short HEAD)
+          echo "PACKAGE_VERSION=${BASE_VERSION}-${COMMIT_HASH}" >> $GITHUB_ENV
 
       - name: Release
         uses: softprops/action-gh-release@v2
@@ -207,8 +118,5 @@ jobs:
             artifacts/lx-music-mobile-v${{ env.PACKAGE_VERSION }}-x86_64.apk
             artifacts/lx-music-mobile-v${{ env.PACKAGE_VERSION }}-x86.apk
             artifacts/lx-music-mobile-v${{ env.PACKAGE_VERSION }}-universal.apk
-
-          # artifacts/lx-music-mobile-v${{ env.PACKAGE_VERSION }}-sl-arm64-v8a.apk
-          # artifacts/lx-music-mobile-v${{ env.PACKAGE_VERSION }}-android_5-universal.apk
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
